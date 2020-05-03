@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+	"interfere-core",
+	"interfere-vst",
+]
+

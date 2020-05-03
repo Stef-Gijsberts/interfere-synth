@@ -1,0 +1,15 @@
+[package]
+name = "interfere-vst"
+version = "0.1.0"
+authors = ["Stef Gijsberts <stefgijsberts@icloud.com>"]
+edition = "2018"
+license = "GPL-3.0-only"
+
+[dependencies]
+interfere-core = { path = "../interfere-core/" }
+vst = "0.2.0"
+
+[lib]
+name = "interfere"
+crate-type = ["cdylib"]
+
