@@ -1,0 +1,57 @@
+
+                         INTERFERE DESIGN DOCUMENT
+
+                              Stef Gijsberts
+                                April 2020
+
+
+1 - Introduction
+2 - Datastructures
+  2.1 - State
+    2.1.1 - Global configuration
+    2.1.2 - Instance configuration
+      2.1.2.1 - Parameter matrix
+  2.2 - Assets
+  2.3 - Code structure
+
+--[ 1 - Introduction
+
+The purpose of this document is to guide both the implementation and
+inspection of the Interfere plugin.
+
+
+--[ 2 - Datastructures
+
+There are exactly two datastructures that define the state of an Interfere
+instance at any time:
+
+ - the global configuration
+ - the instance configuration
+
+
+----[ 2.1.1 - Global configuration
+
+The global configuration is the same for every plugin instance. This
+includes settings regarding the sound quality and presets.
+
+
+----[ 2.1.2 - Instance configuration
+
+The instance configuration can differ among plugin instances. For example,
+if specific components are turned on or off and what waveforms are loaded.
+
+
+------[ 2.1.2.1 - Parameter matrix
+
+The can be fully represented as a matrix, with the rows representing the
+dependent variables, the columns the dependent variables, and the cells the
+weights.
+
+		Base value	Env 1		Env 2		...
+===========================================================================
+Osc. A. vol. 	1.0		-0.2		0.0  		...
+Osc. B. vol. 	0.5		-0.93		0.1  		...
+...		...		...		...		...
+
+
+----[ 2.3 - Code structure

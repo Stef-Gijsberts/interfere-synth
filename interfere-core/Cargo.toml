@@ -6,4 +6,5 @@ edition = "2018"
 license = "GPL-3.0-only"
 
 [dependencies]
+nalgebra = "0.21.0"
 
