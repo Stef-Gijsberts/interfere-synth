@@ -1,5 +1,5 @@
 mod component;
 mod oscillator;
 
-use self::component::Component;
-use self::oscillator::Oscillator;
+pub use self::component::Component;
+pub use self::oscillator::Oscillator;
