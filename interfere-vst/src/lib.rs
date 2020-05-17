@@ -7,6 +7,13 @@ use vst::buffer::AudioBuffer;
 use vst::event::Event;
 use vst::plugin::{CanDo, Category, Info, Plugin};
 
+
+// A macro to generate the necessary exposed functions for the library to be recognized as a VST
+// plugin.
+use vst::plugin_main;
+plugin_main!(InterfereVST);
+
+
 struct InterfereVST {
     instance: Instance,
     sample_rate_hz: f64,
@@ -14,8 +21,8 @@ struct InterfereVST {
     idx_buffer_head: usize,
 }
 
-impl InterfereVST {
-    fn new() -> InterfereVST {
+impl Default for InterfereVST {
+    fn default() -> InterfereVST {
         // The samplerate used as long as there is no rate provided yet through
         // the set_sample_rate function
         const DEFAULT_SAMPLE_RATE: f64 = 44100.0;
@@ -101,3 +108,4 @@ fn get_instance_configuration() -> Option<InstanceConfiguration> {
     // TODO: implement a local configuration file? Or vst presets?
     None
 }
+
