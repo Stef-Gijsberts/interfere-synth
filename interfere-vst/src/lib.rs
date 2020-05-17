@@ -1,11 +1,11 @@
-use std::path::Path;
+use std::sync::Arc;
 
-use interfere_core::{GlobalConfiguration, Instance, InstanceConfiguration};
+use interfere_core::{GlobalConfiguration, Instance, InstanceConfiguration, Parameters};
 
 use vst::api::{Events, Supported};
 use vst::buffer::AudioBuffer;
 use vst::event::Event;
-use vst::plugin::{CanDo, Category, Info, Plugin};
+use vst::plugin::{CanDo, Category, Info, Plugin, PluginParameters};
 
 
 // A macro to generate the necessary exposed functions for the library to be recognized as a VST
@@ -55,7 +55,7 @@ impl Plugin for InterfereVST {
             category: Category::Synth,
             inputs: 0,
             outputs: 2,
-            parameters: self.instance.parameters.length(),
+            parameters: self.instance.parameters.get_num_parameters(),
             initial_delay: 0,
             ..Info::default()
         }
@@ -70,6 +70,10 @@ impl Plugin for InterfereVST {
 
     fn set_sample_rate(&mut self, rate: f32) {
         self.sample_rate_hz = rate as f64;
+    }
+
+    fn get_parameter_object(&mut self) -> Arc<Parameters> {
+        Arc::clone(self.instance.parameters)
     }
 
     fn process_events(&mut self, events: &Events) {
@@ -103,6 +107,28 @@ impl Plugin for InterfereVST {
             *r_out = self.buffer[self.idx_buffer_head].1 as f32;
             self.idx_buffer_head += 1;
         }
+    }
+}
+
+impl PluginParameters for Parameters {
+    fn get_parameter_label(&self, index: i32) -> String {
+        self.get_parameter_label(&self, index)
+    }
+
+    fn get_parameter_text(&self, index: i32) -> String {
+        self.get_parameter_text(&self, index)
+    }
+
+    fn get_parameter_name(&self, index: i32) -> String {
+        self.get_parameter_name(&self, index)
+    }
+
+    fn get_parameter(&self, index: i32) -> f32 {
+        self.get_parameter(index)
+    }
+
+    fn set_parameter(&self, index: i32, value: f32) {
+        self.set_parameter(index, value)
     }
 }
 
