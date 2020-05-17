@@ -27,4 +27,3 @@ pub type NumIndependentValues = na::U9;
 pub type ConnectionWeightMatrix = na::MatrixMN<Value, NumDependentValues, NumIndependentValues>;
 pub type DependentValueVector = na::VectorN<Value, NumDependentValues>;
 pub type IndependentValueVector = na::VectorN<Value, NumIndependentValues>;
-
