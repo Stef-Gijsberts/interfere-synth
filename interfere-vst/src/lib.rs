@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use interfere_core::{GlobalConfiguration, Instance, InstanceConfiguration, Parameters};
+use interfere_core::{Instance, Parameters};
 
 use vst::api::{Events, Supported};
 use vst::buffer::AudioBuffer;
@@ -16,10 +16,13 @@ plugin_main!(InterfereVST);
 
 struct InterfereVST {
     instance: Instance,
+    parameters: Arc<VSTParameters>,
     sample_rate_hz: f64,
     buffer: [(f64, f64); 1024],
     idx_buffer_head: usize,
 }
+
+struct VSTParameters(Parameters);
 
 impl Default for InterfereVST {
     fn default() -> InterfereVST {
@@ -27,10 +30,8 @@ impl Default for InterfereVST {
         // the set_sample_rate function
         const DEFAULT_SAMPLE_RATE: f64 = 44100.0;
 
-        let global_configuration = get_global_configuration().unwrap_or_default();
-        let instance_configuration = get_instance_configuration().unwrap_or_default();
-
-        let instance: Instance = Instance::new(global_configuration, instance_configuration);
+        let instance: Instance = Instance::default();
+        let parameters: Arc<VSTParameters> = Arc::new(VSTParameters(Parameters::default()));
 
         // 1024 is a value that is sufficiently large for the processor to keep
         // up (processing more at once is more efficient), but not so big that it
@@ -39,6 +40,7 @@ impl Default for InterfereVST {
 
         InterfereVST {
             instance,
+            parameters,
             sample_rate_hz: DEFAULT_SAMPLE_RATE,
             buffer,
             idx_buffer_head: buffer.len(),
@@ -55,7 +57,7 @@ impl Plugin for InterfereVST {
             category: Category::Synth,
             inputs: 0,
             outputs: 2,
-            parameters: self.instance.parameters.get_num_parameters(),
+            parameters: self.parameters.len(),
             initial_delay: 0,
             ..Info::default()
         }
@@ -72,8 +74,8 @@ impl Plugin for InterfereVST {
         self.sample_rate_hz = rate as f64;
     }
 
-    fn get_parameter_object(&mut self) -> Arc<Parameters> {
-        Arc::clone(self.instance.parameters)
+    fn get_parameter_object(&mut self) -> Arc<dyn PluginParameters> {
+        Arc::clone(&self.parameters) as Arc<dyn PluginParameters>
     }
 
     fn process_events(&mut self, events: &Events) {
@@ -110,17 +112,17 @@ impl Plugin for InterfereVST {
     }
 }
 
-impl PluginParameters for Parameters {
+impl PluginParameters for VSTParameters {
     fn get_parameter_label(&self, index: i32) -> String {
-        self.get_parameter_label(&self, index)
+        self.get_parameter_label(index)
     }
 
     fn get_parameter_text(&self, index: i32) -> String {
-        self.get_parameter_text(&self, index)
+        self.get_parameter_text(index)
     }
 
     fn get_parameter_name(&self, index: i32) -> String {
-        self.get_parameter_name(&self, index)
+        self.get_parameter_name(index)
     }
 
     fn get_parameter(&self, index: i32) -> f32 {
@@ -130,15 +132,5 @@ impl PluginParameters for Parameters {
     fn set_parameter(&self, index: i32, value: f32) {
         self.set_parameter(index, value)
     }
-}
-
-fn get_global_configuration() -> Option<GlobalConfiguration> {
-    // TODO: implement a global configuration file
-    None
-}
-
-fn get_instance_configuration() -> Option<InstanceConfiguration> {
-    // TODO: implement a local configuration file? Or vst presets?
-    None
 }
 
