@@ -37,12 +37,12 @@ impl Default for InterfereVST {
         // causes a notable delay
         let buffer = [(0.0f64, 0.0f64); 1024];
 
-        return InterfereVST {
+        InterfereVST {
             instance,
             sample_rate_hz: DEFAULT_SAMPLE_RATE,
             buffer,
             idx_buffer_head: buffer.len(),
-        };
+        }
     }
 }
 
@@ -58,6 +58,13 @@ impl Plugin for InterfereVST {
             parameters: self.instance.parameters.length(),
             initial_delay: 0,
             ..Info::default()
+        }
+    }
+
+    fn can_do(&self, can_do: CanDo) -> Supported {
+        match can_do {
+            CanDo::ReceiveMidiEvent => Supported::Yes,
+            _ => Supported::Maybe,
         }
     }
 
