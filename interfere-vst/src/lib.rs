@@ -57,7 +57,7 @@ impl Plugin for InterfereVST {
             category: Category::Synth,
             inputs: 0,
             outputs: 2,
-            parameters: self.parameters.len(),
+            parameters: self.parameters.0.len(),
             initial_delay: 0,
             ..Info::default()
         }
@@ -101,7 +101,7 @@ impl Plugin for InterfereVST {
             let frames_available = self.buffer.len() - self.idx_buffer_head > 0;
 
             if !frames_available {
-                self.instance.audio_requested(self.buffer);
+                self.instance.audio_requested(&mut self.buffer, self.sample_rate_hz);
                 self.idx_buffer_head = 0;
             }
 
@@ -114,23 +114,23 @@ impl Plugin for InterfereVST {
 
 impl PluginParameters for VSTParameters {
     fn get_parameter_label(&self, index: i32) -> String {
-        self.get_parameter_label(index)
+        self.0.get_parameter_label(index)
     }
 
     fn get_parameter_text(&self, index: i32) -> String {
-        self.get_parameter_text(index)
+        self.0.get_parameter_text(index)
     }
 
     fn get_parameter_name(&self, index: i32) -> String {
-        self.get_parameter_name(index)
+        self.0.get_parameter_name(index)
     }
 
     fn get_parameter(&self, index: i32) -> f32 {
-        self.get_parameter(index)
+        self.0.get_parameter(index)
     }
 
     fn set_parameter(&self, index: i32, value: f32) {
-        self.set_parameter(index, value)
+        self.0.set_parameter(index, value)
     }
 }
 
