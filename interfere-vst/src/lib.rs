@@ -57,7 +57,7 @@ impl Plugin for InterfereVST {
             category: Category::Synth,
             inputs: 0,
             outputs: 2,
-            parameters: self.parameters.0.len(),
+            parameters: Parameters::len() as i32,
             initial_delay: 0,
             ..Info::default()
         }
