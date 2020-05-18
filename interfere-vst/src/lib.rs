@@ -7,12 +7,10 @@ use vst::buffer::AudioBuffer;
 use vst::event::Event;
 use vst::plugin::{CanDo, Category, Info, Plugin, PluginParameters};
 
-
 // A macro to generate the necessary exposed functions for the library to be recognized as a VST
 // plugin.
 use vst::plugin_main;
 plugin_main!(InterfereVST);
-
 
 struct InterfereVST {
     instance: Instance,
@@ -101,7 +99,8 @@ impl Plugin for InterfereVST {
             let frames_available = self.buffer.len() - self.idx_buffer_head > 0;
 
             if !frames_available {
-                self.instance.audio_requested(&mut self.buffer, self.sample_rate_hz);
+                self.instance
+                    .audio_requested(&mut self.buffer, self.sample_rate_hz);
                 self.idx_buffer_head = 0;
             }
 
@@ -133,4 +132,3 @@ impl PluginParameters for VSTParameters {
         self.0.set_parameter(index, value)
     }
 }
-

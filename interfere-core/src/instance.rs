@@ -1,17 +1,14 @@
-pub struct Instance {
-}
+pub struct Instance {}
 
 impl Default for Instance {
     fn default() -> Instance {
-        Instance {
-        }
+        Instance {}
     }
 }
 
-
 impl Instance {
     pub fn audio_requested(&mut self, buffer: &mut [(f64, f64)], samplerate_hz: f64) {
-		unimplemented!() // TODO
+        unimplemented!() // TODO
     }
 
     pub fn process_midi_event(&mut self, data: [u8; 3]) {
@@ -24,11 +21,10 @@ impl Instance {
     }
 
     fn note_on(&mut self, note: u8) {
-		unimplemented!() // TODO
+        unimplemented!() // TODO
     }
 
     fn note_off(&mut self, note: u8) {
-		unimplemented!() // TODO
+        unimplemented!() // TODO
     }
-
 }

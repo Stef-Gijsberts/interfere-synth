@@ -1,10 +1,8 @@
-use num_derive::{ToPrimitive, FromPrimitive};
+use num_derive::{FromPrimitive, ToPrimitive};
 
 use nalgebra as na;
 
-
 pub type Value = f64;
-
 
 #[derive(FromPrimitive, ToPrimitive)]
 pub enum DependentValueIndex {
@@ -33,4 +31,3 @@ pub type NumIndependentValues = na::U9;
 pub type ConnectionWeightMatrix = na::MatrixMN<Value, NumDependentValues, NumIndependentValues>;
 pub type DependentValueVector = na::VectorN<Value, NumDependentValues>;
 pub type IndependentValueVector = na::VectorN<Value, NumIndependentValues>;
-
