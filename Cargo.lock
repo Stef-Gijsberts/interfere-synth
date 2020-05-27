@@ -56,10 +56,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "interfere-test"
+version = "0.1.0"
+dependencies = [
+ "interfere-core 0.1.0",
+]
+
+[[package]]
 name = "interfere-vst"
 version = "0.1.0"
 dependencies = [
  "interfere-core 0.1.0",
+ "num-traits 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "vst 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

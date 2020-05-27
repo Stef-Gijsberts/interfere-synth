@@ -1,16 +1,21 @@
 use std::sync::Arc;
 
-use interfere_core::{Instance, Parameters};
+use interfere_core::{Instance, DependentValueIndex};
 
 use vst::api::{Events, Supported};
 use vst::buffer::AudioBuffer;
 use vst::event::Event;
 use vst::plugin::{CanDo, Category, Info, Plugin, PluginParameters};
+use vst::util::ParameterTransfer;
+
+use num_traits::{FromPrimitive, ToPrimitive};
 
 // A macro to generate the necessary exposed functions for the library to be recognized as a VST
 // plugin.
 use vst::plugin_main;
 plugin_main!(InterfereVST);
+
+const NUM_PARAMETERS: i32 = 4; // TODO: not hardcode?
 
 struct InterfereVST {
     instance: Instance,
@@ -20,7 +25,7 @@ struct InterfereVST {
     idx_buffer_head: usize,
 }
 
-struct VSTParameters(Parameters);
+struct VSTParameters(ParameterTransfer);
 
 impl Default for InterfereVST {
     fn default() -> InterfereVST {
@@ -29,7 +34,7 @@ impl Default for InterfereVST {
         const DEFAULT_SAMPLE_RATE: f64 = 44100.0;
 
         let instance: Instance = Instance::default();
-        let parameters: Arc<VSTParameters> = Arc::new(VSTParameters(Parameters::default()));
+        let parameters: Arc<VSTParameters> = Arc::new(VSTParameters(ParameterTransfer::new(NUM_PARAMETERS as usize)));
 
         // 1024 is a value that is sufficiently large for the processor to keep
         // up (processing more at once is more efficient), but not so big that it
@@ -55,7 +60,7 @@ impl Plugin for InterfereVST {
             category: Category::Synth,
             inputs: 0,
             outputs: 2,
-            parameters: Parameters::len() as i32,
+            parameters: NUM_PARAMETERS,
             initial_delay: 0,
             ..Info::default()
         }
@@ -88,19 +93,19 @@ impl Plugin for InterfereVST {
     fn process(&mut self, in_out_chunk: &mut AudioBuffer<f32>) {
         let (_, outputs) = in_out_chunk.split();
 
-        assert!(outputs.len() == 2, "Two output channels are assumed");
+        // assert!(outputs.len() == 2, "Two output channels are assumed");
 
         // Iterate over outputs as (&mut f32, &mut f32)
         // found at: https://github.com/RustAudio/vst-rs/blob/master/examples/dimension_expander.rs
         let (mut l, mut r) = outputs.split_at_mut(1);
-        let stereo_out = l[0].iter_mut().zip(r[0].iter_mut());
+        let mut stereo_out = l[0].iter_mut().zip(r[0].iter_mut());
 
         while let Some((l_out, r_out)) = stereo_out.next() {
             let frames_available = self.buffer.len() - self.idx_buffer_head > 0;
 
             if !frames_available {
-                self.instance
-                    .audio_requested(&mut self.buffer, self.sample_rate_hz);
+                self.instance.update_parameters(self.parameters.0.iterate(true).map(|(idx, v)| (DependentValueIndex::from_usize(idx).unwrap(), v as f64)));
+                self.instance.audio_requested(&mut self.buffer, self.sample_rate_hz);
                 self.idx_buffer_head = 0;
             }
 
@@ -113,22 +118,31 @@ impl Plugin for InterfereVST {
 
 impl PluginParameters for VSTParameters {
     fn get_parameter_label(&self, index: i32) -> String {
-        self.0.get_parameter_label(index)
-    }
-
-    fn get_parameter_text(&self, index: i32) -> String {
-        self.0.get_parameter_text(index)
+        // TODO
+        "".to_owned()
     }
 
     fn get_parameter_name(&self, index: i32) -> String {
-        self.0.get_parameter_name(index)
+        DependentValueIndex::from_i32(index).map(|x| format!("{}", x)).unwrap_or("".to_owned())
     }
 
     fn get_parameter(&self, index: i32) -> f32 {
-        self.0.get_parameter(index)
+        let index_is_valid = (0..NUM_PARAMETERS).contains(&index);
+
+        if !index_is_valid {
+            return 0.0;
+        }
+
+        self.0.get_parameter(index as usize)
     }
 
     fn set_parameter(&self, index: i32, value: f32) {
-        self.0.set_parameter(index, value)
+        let index_is_valid = (0..NUM_PARAMETERS).contains(&index);
+
+        if !index_is_valid {
+            return;
+        }
+
+        self.0.set_parameter(index as usize, value)
     }
 }
