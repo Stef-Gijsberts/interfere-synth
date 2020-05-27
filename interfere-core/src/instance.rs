@@ -27,8 +27,8 @@ impl Default for Instance {
 
         Instance {
             independents,
-            dependents: DependentValueRow::zeros(),
-            connections: ConnectionWeightMatrix::zeros(),
+            dependents,
+            connections,
             osc_a: Oscillator {
                 frequency_in_hz: 1_000.0,
                 phase_in_samples: 0,
