@@ -30,12 +30,12 @@ impl Default for Instance {
             dependents,
             connections,
             osc_a: Oscillator {
-                frequency_in_hz: 1_000.0,
+                pitch_in_tones: 50.0,
                 phase_in_samples: 0,
                 volume_in_0: 0.0
             },
             osc_b: Oscillator {
-                frequency_in_hz: 1_000.0,
+                pitch_in_tones: 50.0,
                 phase_in_samples: 0,
                 volume_in_0: 0.0
             }
@@ -43,27 +43,18 @@ impl Default for Instance {
     }
 }
 
-// Found at https://github.com/RustAudio/vst-rs/blob/master/examples/sine_synth.rs
-fn midi_pitch_to_freq(pitch: u8) -> f64 {
-    const A4_PITCH: i8 = 69;
-    const A4_FREQ: f64 = 440.0;
-
-    // Midi notes can be 0-127
-    ((f64::from(pitch as i8 - A4_PITCH)) / 12.).exp2() * A4_FREQ
-}
-
 impl Instance {
     pub fn audio_requested(&mut self, buffer: &mut [(f64, f64)], samplerate_hz: f64) {
         self.dependents = self.independents * self.connections;
 
         self.osc_a.volume_in_0 = *self.dependents.index(DependentValueIndex::OscAVolume);
-        self.osc_a.frequency_in_hz = *self.dependents.index(DependentValueIndex::OscAPitch);
+        self.osc_a.pitch_in_tones = *self.dependents.index(DependentValueIndex::OscAPitch);
 
         self.osc_b.volume_in_0 = *self.dependents.index(DependentValueIndex::OscBVolume);
-        self.osc_b.frequency_in_hz = *self.dependents.index(DependentValueIndex::OscBPitch);
+        self.osc_b.pitch_in_tones = *self.dependents.index(DependentValueIndex::OscBPitch);
 
-        // self.osc_a.audio_requested(buffer, samplerate_hz);
-        self.osc_b.audio_requested(buffer, samplerate_hz);
+        self.osc_a.audio_requested(buffer, samplerate_hz);
+        // self.osc_b.audio_requested(buffer, samplerate_hz);
     }
 
     pub fn process_midi_event(&mut self, data: [u8; 3]) {
@@ -76,11 +67,12 @@ impl Instance {
     }
 
     fn note_on(&mut self, note: u8) {
-        *self.independents.index_mut(IndependentValueIndex::Pitch) = midi_pitch_to_freq(note);
+        *self.independents.index_mut(IndependentValueIndex::Pitch) = note as f64;
     }
 
     fn note_off(&mut self, note: u8) {
         // TODO
+        *self.independents.index_mut(IndependentValueIndex::Pitch) = 0.0;
     }
 
     pub fn update_parameters(&mut self, updates: impl Iterator<Item=(DependentValueIndex, f64)>) {
