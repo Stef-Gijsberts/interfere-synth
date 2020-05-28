@@ -4,23 +4,30 @@ pub struct Oscillator {
     pub phase_in_samples: u64,
     pub volume_in_0: f64,
     pub pitch_in_tones: f64,
+    pub actual_pitch_in_tones: f64,
 }
 
 impl Component for Oscillator {
     fn audio_requested(&mut self, buffer: &mut [(f64, f64)], samplerate_in_hz: f64) {
         use std::f64::consts::PI;
 
-        let frequency_in_hz = freq_from_pitch(self.pitch_in_tones);
+        let mut frequency_in_hz = freq_from_pitch(self.actual_pitch_in_tones);
 
         for (sample_l, sample_r) in buffer {
             let phase_in_rad = (2.0 * PI) * self.phase_in_samples as f64 * frequency_in_hz / samplerate_in_hz;
 
             let val = f64::sin(phase_in_rad) * self.volume_in_0;
 
-            *sample_l = val;
-            *sample_r = val;
+            *sample_l += val;
+            *sample_r += val;
 
             self.phase_in_samples += 1;
+
+            if phase_in_rad >= (2.0 * PI) {
+                self.phase_in_samples = 0;
+                self.actual_pitch_in_tones = self.pitch_in_tones;
+                frequency_in_hz = freq_from_pitch(self.actual_pitch_in_tones);
+            }
         }
     }
 }

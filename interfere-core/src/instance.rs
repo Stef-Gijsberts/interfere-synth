@@ -32,12 +32,14 @@ impl Default for Instance {
             osc_a: Oscillator {
                 pitch_in_tones: 50.0,
                 phase_in_samples: 0,
-                volume_in_0: 0.0
+                volume_in_0: 0.0,
+                actual_pitch_in_tones: 50.0,
             },
             osc_b: Oscillator {
                 pitch_in_tones: 50.0,
                 phase_in_samples: 0,
-                volume_in_0: 0.0
+                volume_in_0: 0.0,
+                actual_pitch_in_tones: 50.0,
             }
         }
     }
@@ -53,8 +55,9 @@ impl Instance {
         self.osc_b.volume_in_0 = *self.dependents.index(DependentValueIndex::OscBVolume);
         self.osc_b.pitch_in_tones = *self.dependents.index(DependentValueIndex::OscBPitch);
 
+        buffer.iter_mut().for_each(|(l, r)| {*l = 0.0; *r = 0.0;});
         self.osc_a.audio_requested(buffer, samplerate_hz);
-        // self.osc_b.audio_requested(buffer, samplerate_hz);
+        self.osc_b.audio_requested(buffer, samplerate_hz);
     }
 
     pub fn process_midi_event(&mut self, data: [u8; 3]) {
