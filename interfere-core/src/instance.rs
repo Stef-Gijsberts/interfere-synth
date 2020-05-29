@@ -1,4 +1,8 @@
-use crate::values::{WeightGlobalGlobal, WeightGlobalVoice, WeightVoiceVoice, GlobalIndependents, VoiceIndependents, GlobalDependents, VoiceDependents, WeightsGlobalGlobal, WeightsGlobalVoice, WeightsVoiceVoice};
+use crate::values::{
+    GlobalDependents, GlobalIndependents, VoiceDependents, VoiceIndependents, WeightGlobalGlobal,
+    WeightGlobalVoice, WeightVoiceVoice, WeightsGlobalGlobal, WeightsGlobalVoice,
+    WeightsVoiceVoice,
+};
 
 pub struct Instance {
     global_independents: GlobalIndependents,
@@ -32,7 +36,11 @@ impl Default for Instance {
 }
 
 impl Instance {
-    pub fn new(wgg: WeightsGlobalGlobal, wgv: WeightsGlobalVoice, wvv: WeightsVoiceVoice) -> Instance {
+    pub fn new(
+        wgg: WeightsGlobalGlobal,
+        wgv: WeightsGlobalVoice,
+        wvv: WeightsVoiceVoice,
+    ) -> Instance {
         Instance {
             weights_global_global: wgg,
             weights_global_voice: wgv,
@@ -44,6 +52,9 @@ impl Instance {
     pub fn audio_requested(&mut self, buffer: &mut [(f64, f64)], samplerate_hz: f64) {
         self.global_dependents = self.global_independents * self.weights_global_global;
 
-        buffer.iter_mut().for_each(|(l, r)| {*l = 0.0; *r = 0.0;});
+        buffer.iter_mut().for_each(|(l, r)| {
+            *l = 0.0;
+            *r = 0.0;
+        });
     }
 }

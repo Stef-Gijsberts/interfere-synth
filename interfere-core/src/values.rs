@@ -2,7 +2,6 @@ use std::ops;
 
 use nalgebra as na;
 
-
 pub type Value = f64;
 
 pub type NumVoices = na::U16;
@@ -13,16 +12,14 @@ pub type NumVoiceIndependents = na::U7;
 pub type NumGlobalDependents = na::U6;
 pub type NumVoiceDependents = na::U6;
 
-
 #[derive(Clone, Copy)]
 pub enum GlobalIndependent {
     One = 0,
     PitchBend,
     LFO1,
     LFO2,
-    LFO3
+    LFO3,
 }
-
 
 #[derive(Clone, Copy)]
 pub enum VoiceIndependent {
@@ -30,7 +27,6 @@ pub enum VoiceIndependent {
     Envelope1,
     Envelope2,
 }
-
 
 #[derive(Clone, Copy)]
 pub enum GlobalDependent {
@@ -41,13 +37,11 @@ pub enum GlobalDependent {
     Mod3,
 }
 
-
 #[derive(Clone, Copy)]
 pub enum VoiceDependent {
     OscPitch,
     OscVolume,
 }
-
 
 #[derive(Clone, Copy)]
 pub struct WeightGlobalGlobal(pub GlobalIndependent, pub GlobalDependent);
@@ -57,7 +51,6 @@ pub struct WeightGlobalVoice(pub GlobalIndependent, pub VoiceDependent);
 
 #[derive(Clone, Copy)]
 pub struct WeightVoiceVoice(pub VoiceIndependent, pub VoiceDependent);
-
 
 type Matrix<R, C> = na::MatrixMN<Value, R, C>;
 type Row<C> = Matrix<na::U1, C>;
@@ -72,10 +65,8 @@ pub type WeightsVoiceVoice = Matrix<NumVoiceIndependents, NumVoiceDependents>;
 pub type GlobalDependents = Row<NumGlobalDependents>;
 pub type VoiceDependents = Matrix<NumVoices, NumVoiceDependents>;
 
-
 macro_rules! impl_row_index {
     ($indexable_type:ty, $index_type:ty) => {
-
         impl ops::Index<$index_type> for $indexable_type {
             type Output = Value;
 
@@ -89,13 +80,11 @@ macro_rules! impl_row_index {
                 self.index_mut(index as usize)
             }
         }
-
     };
 }
 
 macro_rules! impl_matrix_index {
     ($indexable_type:ty, $index_type:ty) => {
-
         impl ops::Index<$index_type> for $indexable_type {
             type Output = Value;
 
@@ -109,10 +98,8 @@ macro_rules! impl_matrix_index {
                 self.index_mut((index.0 as usize, index.1 as usize))
             }
         }
-
     };
 }
-
 
 impl_row_index!(GlobalIndependents, GlobalIndependent);
 impl_row_index!(VoiceIndependents, VoiceIndependent);

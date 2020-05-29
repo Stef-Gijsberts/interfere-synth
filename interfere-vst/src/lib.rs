@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use interfere_core::{Instance, DependentValueIndex};
+use interfere_core::{DependentValueIndex, Instance};
 
 use vst::api::{Events, Supported};
 use vst::buffer::AudioBuffer;
@@ -34,7 +34,9 @@ impl Default for InterfereVST {
         const DEFAULT_SAMPLE_RATE: f64 = 44100.0;
 
         let instance: Instance = Instance::default();
-        let parameters: Arc<VSTParameters> = Arc::new(VSTParameters(ParameterTransfer::new(NUM_PARAMETERS as usize)));
+        let parameters: Arc<VSTParameters> = Arc::new(VSTParameters(ParameterTransfer::new(
+            NUM_PARAMETERS as usize,
+        )));
 
         // 1024 is a value that is sufficiently large for the processor to keep
         // up (processing more at once is more efficient), but not so big that it
@@ -104,8 +106,14 @@ impl Plugin for InterfereVST {
             let frames_available = self.buffer.len() - self.idx_buffer_head > 0;
 
             if !frames_available {
-                self.instance.update_parameters(self.parameters.0.iterate(true).map(|(idx, v)| (DependentValueIndex::from_usize(idx).unwrap(), v as f64)));
-                self.instance.audio_requested(&mut self.buffer, self.sample_rate_hz);
+                self.instance.update_parameters(
+                    self.parameters
+                        .0
+                        .iterate(true)
+                        .map(|(idx, v)| (DependentValueIndex::from_usize(idx).unwrap(), v as f64)),
+                );
+                self.instance
+                    .audio_requested(&mut self.buffer, self.sample_rate_hz);
                 self.idx_buffer_head = 0;
             }
 
@@ -123,7 +131,9 @@ impl PluginParameters for VSTParameters {
     }
 
     fn get_parameter_name(&self, index: i32) -> String {
-        DependentValueIndex::from_i32(index).map(|x| format!("{}", x)).unwrap_or("".to_owned())
+        DependentValueIndex::from_i32(index)
+            .map(|x| format!("{}", x))
+            .unwrap_or("".to_owned())
     }
 
     fn get_parameter(&self, index: i32) -> f32 {
