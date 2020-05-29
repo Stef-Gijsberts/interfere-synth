@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use interfere_core::{DependentValueIndex, Instance};
+use interfere_core::{values::VoiceDependent, Instance};
 
 use vst::api::{Events, Supported};
 use vst::buffer::AudioBuffer;
@@ -15,7 +15,7 @@ use num_traits::{FromPrimitive, ToPrimitive};
 use vst::plugin_main;
 plugin_main!(InterfereVST);
 
-const NUM_PARAMETERS: i32 = 4; // TODO: not hardcode?
+const NUM_PARAMETERS: i32 = 2; // TODO: not hardcode?
 
 struct InterfereVST {
     instance: Instance,
@@ -110,7 +110,7 @@ impl Plugin for InterfereVST {
                     self.parameters
                         .0
                         .iterate(true)
-                        .map(|(idx, v)| (DependentValueIndex::from_usize(idx).unwrap(), v as f64)),
+                        .map(|(idx, v)| (VoiceDependent::from_usize(idx).unwrap(), v as f64)),
                 );
                 self.instance
                     .audio_requested(&mut self.buffer, self.sample_rate_hz);
@@ -131,8 +131,8 @@ impl PluginParameters for VSTParameters {
     }
 
     fn get_parameter_name(&self, index: i32) -> String {
-        DependentValueIndex::from_i32(index)
-            .map(|x| format!("{}", x))
+        VoiceDependent::from_i32(index)
+            .map(|x| format!("{:?}", x))
             .unwrap_or("".to_owned())
     }
 

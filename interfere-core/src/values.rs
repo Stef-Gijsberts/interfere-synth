@@ -2,6 +2,8 @@ use std::ops;
 
 use nalgebra as na;
 
+use num_derive::FromPrimitive;
+
 pub type Value = f64;
 
 pub type NumVoices = na::U16;
@@ -37,11 +39,17 @@ pub enum GlobalDependent {
     Mod3,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, FromPrimitive, Debug)]
 pub enum VoiceDependent {
-    OscPitch,
+    OscPitch = 0,
     OscVolume,
 }
+
+#[derive(Clone, Copy)]
+pub struct VoicesIndependent(pub usize, pub VoiceIndependent);
+
+#[derive(Clone, Copy)]
+pub struct VoicesDependent(pub usize, pub VoiceDependent);
 
 #[derive(Clone, Copy)]
 pub struct WeightGlobalGlobal(pub GlobalIndependent, pub GlobalDependent);
@@ -56,14 +64,14 @@ type Matrix<R, C> = na::MatrixMN<Value, R, C>;
 type Row<C> = Matrix<na::U1, C>;
 
 pub type GlobalIndependents = Row<NumGlobalIndependents>;
-pub type VoiceIndependents = Matrix<NumVoices, NumVoiceIndependents>;
+pub type VoicesIndependents = Matrix<NumVoices, NumVoiceIndependents>;
 
 pub type WeightsGlobalGlobal = Matrix<NumGlobalIndependents, NumGlobalDependents>;
 pub type WeightsGlobalVoice = Matrix<NumGlobalIndependents, NumVoiceDependents>;
 pub type WeightsVoiceVoice = Matrix<NumVoiceIndependents, NumVoiceDependents>;
 
 pub type GlobalDependents = Row<NumGlobalDependents>;
-pub type VoiceDependents = Matrix<NumVoices, NumVoiceDependents>;
+pub type VoicesDependents = Matrix<NumVoices, NumVoiceDependents>;
 
 macro_rules! impl_row_index {
     ($indexable_type:ty, $index_type:ty) => {
@@ -102,11 +110,11 @@ macro_rules! impl_matrix_index {
 }
 
 impl_row_index!(GlobalIndependents, GlobalIndependent);
-impl_row_index!(VoiceIndependents, VoiceIndependent);
+impl_matrix_index!(VoicesIndependents, VoicesIndependent);
 
 impl_matrix_index!(WeightsGlobalGlobal, WeightGlobalGlobal);
 impl_matrix_index!(WeightsGlobalVoice, WeightGlobalVoice);
-impl_matrix_index!(WeightsVoiceVoice, WeightGlobalGlobal);
+impl_matrix_index!(WeightsVoiceVoice, WeightVoiceVoice);
 
 impl_row_index!(GlobalDependents, GlobalDependent);
-impl_row_index!(VoiceDependents, VoiceDependent);
+impl_matrix_index!(VoicesDependents, VoicesDependent);
