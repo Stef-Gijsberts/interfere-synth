@@ -1,6 +1,5 @@
-mod components;
 mod instance;
 mod values;
+mod voice;
 
 pub use self::instance::Instance;
-pub use self::values::DependentValueIndex;

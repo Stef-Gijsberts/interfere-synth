@@ -3,7 +3,6 @@
 members = [
 	"interfere-core",
 	"interfere-vst",
-	"interfere-test",
 ]
 
 [profile.release]

@@ -1,131 +1,125 @@
-use std::fmt;
-
-use num_derive::{FromPrimitive, ToPrimitive};
+use std::ops;
 
 use nalgebra as na;
 
+
 pub type Value = f64;
 
-#[derive(FromPrimitive, ToPrimitive, Clone, Copy)]
-pub enum DependentValueIndex {
-    OscAVolume = 0,
-    OscBVolume = 1,
-    OscAPitch = 2,
-    OscBPitch = 3,
-}
+pub type NumVoices = na::U16;
 
-impl fmt::Display for DependentValueIndex {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            DependentValueIndex::OscAVolume => write!(f, "Oscillator A Volume"),
-            DependentValueIndex::OscBVolume => write!(f, "Oscillator B Volume"),
-            DependentValueIndex::OscAPitch => write!(f, "Oscillator A Pitch"),
-            DependentValueIndex::OscBPitch => write!(f, "Oscillator B Pitch"),
-        }
-    }
-}
+pub type NumGlobalIndependents = na::U5;
+pub type NumVoiceIndependents = na::U7;
 
-#[derive(FromPrimitive, ToPrimitive, Clone, Copy)]
-pub enum IndependentValueIndex {
+pub type NumGlobalDependents = na::U6;
+pub type NumVoiceDependents = na::U6;
+
+
+#[derive(Clone, Copy)]
+pub enum GlobalIndependent {
     One = 0,
-    Pitch = 1,
-    OscA = 2,
-    OscB = 3,
+    PitchBend,
+    LFO1,
+    LFO2,
+    LFO3
+}
+
+
+#[derive(Clone, Copy)]
+pub enum VoiceIndependent {
+    Pitch,
+    Envelope1,
+    Envelope2,
+}
+
+
+#[derive(Clone, Copy)]
+pub enum GlobalDependent {
+    LFO1Frequency,
+    LFO2Frequency,
     Mod1,
     Mod2,
     Mod3,
-    LFO1,
-    LFO2,
-    LFO3,
-}
-
-pub struct ConnectionValueIndex(pub IndependentValueIndex, pub DependentValueIndex);
-
-pub type NumDependentValues = na::U4;
-pub type NumIndependentValues = na::U9;
-
-pub type ConnectionWeightMatrix = na::MatrixMN<Value, NumIndependentValues, NumDependentValues>;
-pub type DependentValueRow = na::RowVectorN<Value, NumDependentValues>;
-pub type IndependentValueRow = na::RowVectorN<Value, NumIndependentValues>;
-
-
-
-impl<'a> na::indexing::MatrixIndex<'a, Value, na::U1, NumDependentValues, na::storage::Owned<Value, na::U1, NumDependentValues>> for DependentValueIndex {
-    type Output = &'a Value;
-
-    fn contained_by(&self, matrix: &DependentValueRow) -> bool {
-        (*self as usize).contained_by(matrix)
-    }
-
-    /// Produces a mutable view of the data at this location, without
-    /// performing any bounds checking.
-    #[doc(hidden)]
-    unsafe fn get_unchecked(self, matrix: &'a DependentValueRow) -> Self::Output {
-        matrix.get_unchecked(self as usize)
-    }
-}
-
-impl<'a> na::indexing::MatrixIndexMut<'a, Value, na::U1, NumDependentValues, na::storage::Owned<Value, na::U1, NumDependentValues>> for DependentValueIndex {
-    type OutputMut = &'a mut Value;
-
-    /// Produces a mutable view of the data at this location, without
-    /// performing any bounds checking.
-    #[doc(hidden)]
-    unsafe fn get_unchecked_mut(self, matrix: &'a mut DependentValueRow) -> Self::OutputMut {
-        matrix.get_unchecked_mut(self as usize)
-    }
 }
 
 
-impl<'a> na::indexing::MatrixIndex<'a, Value, na::U1, NumIndependentValues, na::storage::Owned<Value, na::U1, NumIndependentValues>> for IndependentValueIndex {
-    type Output = &'a Value;
-
-    fn contained_by(&self, matrix: &IndependentValueRow) -> bool {
-        (*self as usize).contained_by(matrix)
-    }
-
-    /// Produces a mutable view of the data at this location, without
-    /// performing any bounds checking.
-    #[doc(hidden)]
-    unsafe fn get_unchecked(self, matrix: &'a IndependentValueRow) -> Self::Output {
-        matrix.get_unchecked(self as usize)
-    }
-}
-
-impl<'a> na::indexing::MatrixIndexMut<'a, Value, na::U1, NumIndependentValues, na::storage::Owned<Value, na::U1, NumIndependentValues>> for IndependentValueIndex {
-    type OutputMut = &'a mut Value;
-
-    /// Produces a mutable view of the data at this location, without
-    /// performing any bounds checking.
-    #[doc(hidden)]
-    unsafe fn get_unchecked_mut(self, matrix: &'a mut IndependentValueRow) -> Self::OutputMut {
-        matrix.get_unchecked_mut(self as usize)
-    }
+#[derive(Clone, Copy)]
+pub enum VoiceDependent {
+    OscPitch,
+    OscVolume,
 }
 
 
-impl<'a> na::indexing::MatrixIndex<'a, Value, NumIndependentValues, NumDependentValues, na::storage::Owned<Value, NumIndependentValues, NumDependentValues>> for ConnectionValueIndex {
-    type Output = &'a Value;
+#[derive(Clone, Copy)]
+pub struct WeightGlobalGlobal(pub GlobalIndependent, pub GlobalDependent);
 
-    fn contained_by(&self, matrix: &ConnectionWeightMatrix) -> bool {
-        (self.0 as usize, self.1 as usize).contained_by(matrix)
-    }
+#[derive(Clone, Copy)]
+pub struct WeightGlobalVoice(pub GlobalIndependent, pub VoiceDependent);
 
-    /// Produces a mutable view of the data at this location, without
-    /// performing any bounds checking.
-    #[doc(hidden)]
-    unsafe fn get_unchecked(self, matrix: &'a ConnectionWeightMatrix) -> Self::Output {
-        matrix.get_unchecked((self.0 as usize, self.1 as usize))
-    }
+#[derive(Clone, Copy)]
+pub struct WeightVoiceVoice(pub VoiceIndependent, pub VoiceDependent);
+
+
+type Matrix<R, C> = na::MatrixMN<Value, R, C>;
+type Row<C> = Matrix<na::U1, C>;
+
+pub type GlobalIndependents = Row<NumGlobalIndependents>;
+pub type VoiceIndependents = Matrix<NumVoices, NumVoiceIndependents>;
+
+pub type WeightsGlobalGlobal = Matrix<NumGlobalIndependents, NumGlobalDependents>;
+pub type WeightsGlobalVoice = Matrix<NumGlobalIndependents, NumVoiceDependents>;
+pub type WeightsVoiceVoice = Matrix<NumVoiceIndependents, NumVoiceDependents>;
+
+pub type GlobalDependents = Row<NumGlobalDependents>;
+pub type VoiceDependents = Matrix<NumVoices, NumVoiceDependents>;
+
+
+macro_rules! impl_row_index {
+    ($indexable_type:ty, $index_type:ty) => {
+
+        impl ops::Index<$index_type> for $indexable_type {
+            type Output = Value;
+
+            fn index(&self, index: $index_type) -> &Value {
+                self.index(index as usize)
+            }
+        }
+
+        impl ops::IndexMut<$index_type> for $indexable_type {
+            fn index_mut(&mut self, index: $index_type) -> &mut Value {
+                self.index_mut(index as usize)
+            }
+        }
+
+    };
 }
 
-impl<'a> na::indexing::MatrixIndexMut<'a, Value, NumIndependentValues, NumDependentValues, na::storage::Owned<Value, NumIndependentValues, NumDependentValues>> for ConnectionValueIndex {
-    type OutputMut = &'a mut Value;
+macro_rules! impl_matrix_index {
+    ($indexable_type:ty, $index_type:ty) => {
 
-    /// Produces a mutable view of the data at this location, without
-    /// performing any bounds checking.
-    #[doc(hidden)]
-    unsafe fn get_unchecked_mut(self, matrix: &'a mut ConnectionWeightMatrix) -> Self::OutputMut {
-        matrix.get_unchecked_mut((self.0 as usize, self.1 as usize))
-    }
+        impl ops::Index<$index_type> for $indexable_type {
+            type Output = Value;
+
+            fn index(&self, index: $index_type) -> &Value {
+                self.index((index.0 as usize, index.1 as usize))
+            }
+        }
+
+        impl ops::IndexMut<$index_type> for $indexable_type {
+            fn index_mut(&mut self, index: $index_type) -> &mut Value {
+                self.index_mut((index.0 as usize, index.1 as usize))
+            }
+        }
+
+    };
 }
+
+
+impl_row_index!(GlobalIndependents, GlobalIndependent);
+impl_row_index!(VoiceIndependents, VoiceIndependent);
+
+impl_matrix_index!(WeightsGlobalGlobal, WeightGlobalGlobal);
+impl_matrix_index!(WeightsGlobalVoice, WeightGlobalVoice);
+impl_matrix_index!(WeightsVoiceVoice, WeightGlobalGlobal);
+
+impl_row_index!(GlobalDependents, GlobalDependent);
+impl_row_index!(VoiceDependents, VoiceDependent);

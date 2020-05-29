@@ -56,13 +56,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "interfere-test"
-version = "0.1.0"
-dependencies = [
- "interfere-core 0.1.0",
-]
-
-[[package]]
 name = "interfere-vst"
 version = "0.1.0"
 dependencies = [
