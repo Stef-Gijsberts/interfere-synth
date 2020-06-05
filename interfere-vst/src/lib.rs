@@ -102,7 +102,9 @@ impl Plugin for InterfereVST {
         let (mut l, mut r) = outputs.split_at_mut(1);
         let mut stereo_out = l[0].iter_mut().zip(r[0].iter_mut());
 
-        while let Some((l_out, r_out)) = stereo_out.next() {
+        stereo_out.for_each(|(l_out, r_out)| {
+            // TODO: waarom werkt dit? Zou er geen overflow moeten zijn?
+            // (zelfde geval bij instance)
             let frames_available = self.buffer.len() - self.idx_buffer_head > 0;
 
             if !frames_available {
@@ -120,7 +122,7 @@ impl Plugin for InterfereVST {
             *l_out = self.buffer[self.idx_buffer_head].0 as f32;
             *r_out = self.buffer[self.idx_buffer_head].1 as f32;
             self.idx_buffer_head += 1;
-        }
+        })
     }
 }
 

@@ -11,6 +11,8 @@ pub struct Instance {
     voices_dependents: DVoicesMatrix,
     oscillator: Oscillator,
     voices: [Option<Voice>; 16],
+    voice_buffers: [[f64; 16]; 1000],
+    idx_voice_buffers_head: usize,
 }
 
 #[derive(Clone, Copy)]
@@ -36,6 +38,8 @@ impl Default for Instance {
         weights_voice_voice[WVoiceVoice(IVoice::Envelope1, DVoice::OscVolume)] = 1.0;
         // TODO: set more sane defaults
 
+        let voice_buffers = [[0.0; 16]; 1000];
+
         Instance {
             global_independents,
             voices_independents,
@@ -46,6 +50,8 @@ impl Default for Instance {
             voices_dependents: DVoicesMatrix::zeros(),
             oscillator: Default::default(),
             voices: [None; 16],
+            voice_buffers,
+            idx_voice_buffers_head: voice_buffers.len(),
         }
     }
 }
@@ -66,13 +72,20 @@ impl Instance {
 
     pub fn audio_requested(&mut self, buffer: &mut [(f64, f64)], samplerate_in_hz: f64) {
         self.recalculate_dependents();
-
+        
         buffer.iter_mut().for_each(|(l, r)| {
-            *l = 0.0;
-            *r = 0.0;
-        });
+            let audio_available = self.voice_buffers.len() - self.idx_voice_buffers_head > 0;
 
-        self.oscillator.audio_requested(&self.voices_dependents, buffer, samplerate_in_hz);
+            if !audio_available {
+                self.oscillator.audio_requested(&self.voices_dependents, &mut self.voice_buffers[self.idx_voice_buffers_head..], samplerate_in_hz);
+                self.idx_voice_buffers_head = 0;
+            }
+
+            *l = self.voice_buffers[self.idx_voice_buffers_head].iter().sum::<f64>() / 16.0;
+            *r = *l;
+
+            self.idx_voice_buffers_head += 1;
+        });
     }
 
     fn recalculate_dependents(&mut self) {
