@@ -1,18 +1,14 @@
-use crate::values::{
-    GlobalDependents, GlobalIndependent, GlobalIndependents, VoiceDependent, VI,
-    VoicesDependents, VoicesIndependent, VoicesIndependents, WeightGlobalVoice, WeightVoiceVoice,
-    WeightsGlobalGlobal, WeightsGlobalVoice, WeightsVoiceVoice,
-};
+use crate::values::*;
 use crate::Oscillator;
 
 pub struct Instance {
-    global_independents: GlobalIndependents,
-    voices_independents: VoicesIndependents,
-    pub weights_global_global: WeightsGlobalGlobal,
-    pub weights_global_voice: WeightsGlobalVoice,
-    pub weights_voice_voice: WeightsVoiceVoice,
-    global_dependents: GlobalDependents,
-    voices_dependents: VoicesDependents,
+    global_independents: IGlobalRow,
+    voices_independents: IVoicesMatrix,
+    pub weights_global_global: WGlobalGlobalMatrix,
+    pub weights_global_voice: WGlobalVoiceMatrix,
+    pub weights_voice_voice: WVoiceVoiceMatrix,
+    global_dependents: DGlobalRow,
+    voices_dependents: DVoicesMatrix,
     oscillator: Oscillator,
     voices: [Option<Voice>; 16],
 }
@@ -25,19 +21,19 @@ struct Voice {
 
 impl Default for Instance {
     fn default() -> Instance {
-        let mut global_independents = GlobalIndependents::zeros();
-        let voices_independents = VoicesIndependents::zeros();
+        let mut global_independents = IGlobalRow::zeros();
+        let voices_independents = IVoicesMatrix::zeros();
 
-        let weights_global_global = WeightsGlobalGlobal::zeros();
-        let weights_global_voice = WeightsGlobalVoice::zeros();
-        let mut weights_voice_voice = WeightsVoiceVoice::zeros();
+        let weights_global_global = WGlobalGlobalMatrix::zeros();
+        let weights_global_voice = WGlobalVoiceMatrix::zeros();
+        let mut weights_voice_voice = WVoiceVoiceMatrix::zeros();
 
         global_independents
-            .row_mut(GlobalIndependent::One as usize)
+            .row_mut(IGlobal::One as usize)
             .fill(1.0);
 
-        weights_voice_voice[WeightVoiceVoice(VI::Pitch, VoiceDependent::OscPitch)] = 1.0;
-        weights_voice_voice[WeightVoiceVoice(VI::Envelope1, VoiceDependent::OscVolume)] = 1.0;
+        weights_voice_voice[WVoiceVoice(IVoice::Pitch, DVoice::OscPitch)] = 1.0;
+        weights_voice_voice[WVoiceVoice(IVoice::Envelope1, DVoice::OscVolume)] = 1.0;
         // TODO: set more sane defaults
 
         Instance {
@@ -46,8 +42,8 @@ impl Default for Instance {
             weights_global_global,
             weights_global_voice,
             weights_voice_voice,
-            global_dependents: GlobalDependents::zeros(),
-            voices_dependents: VoicesDependents::zeros(),
+            global_dependents: DGlobalRow::zeros(),
+            voices_dependents: DVoicesMatrix::zeros(),
             oscillator: Default::default(),
             voices: [None; 16],
         }
@@ -56,9 +52,9 @@ impl Default for Instance {
 
 impl Instance {
     pub fn new(
-        wgg: WeightsGlobalGlobal,
-        wgv: WeightsGlobalVoice,
-        wvv: WeightsVoiceVoice,
+        wgg: WGlobalGlobalMatrix,
+        wgv: WGlobalVoiceMatrix,
+        wvv: WVoiceVoiceMatrix,
     ) -> Instance {
         Instance {
             weights_global_global: wgg,
@@ -111,8 +107,8 @@ impl Instance {
                 note_pitch: note
             });
 
-            self.voices_independents[VoicesIndependent(idx, VI::Pitch)] = note as f64;
-            self.voices_independents[VoicesIndependent(idx, VI::Envelope1)] = 1.0;
+            self.voices_independents[IVoices(idx, IVoice::Pitch)] = note as f64;
+            self.voices_independents[IVoices(idx, IVoice::Envelope1)] = 1.0;
 
             return;
         }
@@ -121,7 +117,7 @@ impl Instance {
     fn note_off(&mut self, note: u8) {
         for idx in 0..self.voices.len() {
             if let Some(voice) = &self.voices[idx] {
-                self.voices_independents[VoicesIndependent(idx, VI::Envelope1)] = 0.0;
+                self.voices_independents[IVoices(idx, IVoice::Envelope1)] = 0.0;
 
                 if voice.note_pitch == note {
                     self.voices[idx] = None;
@@ -130,9 +126,9 @@ impl Instance {
         }
     }
 
-    pub fn update_parameters(&mut self, updates: impl Iterator<Item = (VoiceDependent, f64)>) {
+    pub fn update_parameters(&mut self, updates: impl Iterator<Item = (DVoice, f64)>) {
         for (idx, new_value) in updates {
-            self.weights_global_voice[WeightGlobalVoice(GlobalIndependent::One, idx)] = new_value;
+            self.weights_global_voice[WGlobalVoice(IGlobal::One, idx)] = new_value;
         }
     }
 }

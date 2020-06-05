@@ -55,7 +55,7 @@ pub struct DVoices(pub usize, pub DVoice);
 pub struct WGlobalGlobal(pub IGlobal, pub DGlobal);
 
 #[derive(Clone, Copy)]
-pub struct WGlobalVoice(pub IGlobal, pub IVoice);
+pub struct WGlobalVoice(pub IGlobal, pub DVoice);
 
 #[derive(Clone, Copy)]
 pub struct WVoiceVoice(pub IVoice, pub DVoice);
@@ -77,6 +77,20 @@ pub type DVoicesMatrix = Matrix<NumVoices, NumDVoice>;
 
 macro_rules! impl_row_index {
     ($row_type: ty, $index_type: ty, $num_columns: ty) => {
+        impl ops::Index<$index_type> for $row_type {
+            type Output = Value;
+
+            fn index(&self, index: $index_type) -> &Value {
+                self.index(index as usize)
+            }
+        }
+
+        impl ops::IndexMut<$index_type> for $row_type {
+            fn index_mut(&mut self, index: $index_type) -> &mut Value {
+                self.index_mut(index as usize)
+            }
+        }
+
         impl<'a> na::indexing::MatrixIndex<'a, Value, na::U1, $num_columns, na::storage::Owned<Value, na::U1, $num_columns>> for $index_type {
             type Output = Value;
 
@@ -100,15 +114,29 @@ macro_rules! impl_row_index {
 }
 
 macro_rules! impl_matrix_index {
-    ($row_type: ty, $index_type: ty, $num_rows: ty, $num_columns: ty) => {
+    ($matrix_type: ty, $index_type: ty, $num_rows: ty, $num_columns: ty) => {
+        impl ops::Index<$index_type> for $matrix_type {
+            type Output = Value;
+
+            fn index(&self, index: $index_type) -> &Value {
+                self.index((index.0 as usize, index.1 as usize))
+            }
+        }
+
+        impl ops::IndexMut<$index_type> for $matrix_type {
+            fn index_mut(&mut self, index: $index_type) -> &mut Value {
+                self.index_mut((index.0 as usize, index.1 as usize))
+            }
+        }
+
         impl<'a> na::indexing::MatrixIndex<'a, Value, $num_rows, $num_columns, na::storage::Owned<Value, $num_rows, $num_columns>> for $index_type {
             type Output = Value;
 
-            fn contained_by(&self, matrix: &$row_type) -> bool {
+            fn contained_by(&self, matrix: &$matrix_type) -> bool {
                 (self.0 as usize) < matrix.ncols() && (self.1 as usize) < matrix.nrows()
             }
 
-            unsafe fn get_unchecked(self, matrix: &'a $row_type) -> Self::Output {
+            unsafe fn get_unchecked(self, matrix: &'a $matrix_type) -> Self::Output {
                 matrix[(self.0 as usize, self.1 as usize)]
             }
         }
@@ -116,7 +144,7 @@ macro_rules! impl_matrix_index {
         impl<'a> na::indexing::MatrixIndexMut<'a, Value, $num_rows, $num_columns, na::storage::Owned<Value, $num_rows, $num_columns>> for $index_type {
             type OutputMut = &'a mut Self::Output;
 
-            unsafe fn get_unchecked_mut(self, matrix: &'a mut $row_type) -> Self::OutputMut {
+            unsafe fn get_unchecked_mut(self, matrix: &'a mut $matrix_type) -> Self::OutputMut {
                 &mut matrix[(self.0 as usize, self.1 as usize)]
             }
         }

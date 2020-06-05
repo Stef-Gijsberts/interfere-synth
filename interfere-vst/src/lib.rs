@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use interfere_core::{values::VoiceDependent, Instance};
+use interfere_core::{values::DVoice, Instance};
 
 use vst::api::{Events, Supported};
 use vst::buffer::AudioBuffer;
@@ -110,7 +110,7 @@ impl Plugin for InterfereVST {
                     self.parameters
                         .0
                         .iterate(true)
-                        .map(|(idx, v)| (VoiceDependent::from_usize(idx).unwrap(), v as f64)),
+                        .map(|(idx, v)| (DVoice::from_usize(idx).unwrap(), v as f64)),
                 );
                 self.instance
                     .audio_requested(&mut self.buffer, self.sample_rate_hz);
@@ -131,7 +131,7 @@ impl PluginParameters for VSTParameters {
     }
 
     fn get_parameter_name(&self, index: i32) -> String {
-        VoiceDependent::from_i32(index)
+        DVoice::from_i32(index)
             .map(|x| format!("{:?}", x))
             .unwrap_or("".to_owned())
     }
