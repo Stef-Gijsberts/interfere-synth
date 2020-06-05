@@ -14,35 +14,42 @@ pub struct Instance {
     global_dependents: GlobalDependents,
     voices_dependents: VoicesDependents,
     oscillator: Oscillator,
+    voices: [Option<Voice>; 16],
+}
+
+#[derive(Clone, Copy)]
+struct Voice {
+    pub note_pitch: u8,
+    pub t_samples: usize,
 }
 
 impl Default for Instance {
     fn default() -> Instance {
-        let mut weights_global_global = WeightsGlobalGlobal::zeros();
-        let mut weights_global_voice = WeightsGlobalVoice::zeros();
+        let mut global_independents = GlobalIndependents::zeros();
+        let voices_independents = VoicesIndependents::zeros();
+
+        let weights_global_global = WeightsGlobalGlobal::zeros();
+        let weights_global_voice = WeightsGlobalVoice::zeros();
         let mut weights_voice_voice = WeightsVoiceVoice::zeros();
 
-        weights_global_global
+        global_independents
             .row_mut(GlobalIndependent::One as usize)
             .fill(1.0);
 
-        weights_global_voice
-            .row_mut(GlobalIndependent::One as usize)
-            .fill(1.0);
-
-        weights_voice_voice[WeightVoiceVoice(VoiceIndependent::Pitch, VoiceDependent::OscPitch)] =
-            1.0;
+        weights_voice_voice[WeightVoiceVoice(VoiceIndependent::Pitch, VoiceDependent::OscPitch)] = 1.0;
+        weights_voice_voice[WeightVoiceVoice(VoiceIndependent::Envelope1, VoiceDependent::OscVolume)] = 1.0;
         // TODO: set more sane defaults
 
         Instance {
-            global_independents: GlobalIndependents::zeros(),
-            voices_independents: VoicesIndependents::zeros(),
+            global_independents,
+            voices_independents,
             weights_global_global,
             weights_global_voice,
             weights_voice_voice,
             global_dependents: GlobalDependents::zeros(),
             voices_dependents: VoicesDependents::zeros(),
             oscillator: Default::default(),
+            voices: [None; 16],
         }
     }
 }
@@ -94,12 +101,33 @@ impl Instance {
     }
 
     fn note_on(&mut self, note: u8) {
-        // TODO
-        self.voices_independents[VoicesIndependent(0, VoiceIndependent::Pitch)] = note as f64;
+        for idx in 0..self.voices.len() {
+            if self.voices[idx].is_some() {
+                continue;
+            }
+
+            self.voices[idx] = Some(Voice {
+                t_samples: 0,
+                note_pitch: note
+            });
+
+            self.voices_independents[VoicesIndependent(idx, VoiceIndependent::Pitch)] = note as f64;
+            self.voices_independents[VoicesIndependent(idx, VoiceIndependent::Envelope1)] = 1.0;
+
+            return;
+        }
     }
 
     fn note_off(&mut self, note: u8) {
-        // TODO
+        for idx in 0..self.voices.len() {
+            if let Some(voice) = &self.voices[idx] {
+                self.voices_independents[VoicesIndependent(idx, VoiceIndependent::Envelope1)] = 0.0;
+
+                if voice.note_pitch == note {
+                    self.voices[idx] = None;
+                }
+            }
+        }
     }
 
     pub fn update_parameters(&mut self, updates: impl Iterator<Item = (VoiceDependent, f64)>) {

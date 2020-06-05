@@ -61,6 +61,8 @@ impl Oscillator {
                     self.phases_in_samples[idx] = 0;
                     self.current_pitches_in_tones[idx] =
                         voices_dependents[VoicesDependent(idx, VoiceDependent::OscPitch)];
+                    self.current_volumes_in_0[idx] =
+                        voices_dependents[VoicesDependent(idx, VoiceDependent::OscVolume)];
                 }
             }
         }
