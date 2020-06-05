@@ -11,17 +11,16 @@ pub struct Instance {
     voices_dependents: DVoicesMatrix,
     oscillator: Oscillator,
     filter1: Filter,
-    filter2: Filter,
-    filter3: Filter,
     voices: [Option<Voice>; 16],
     voice_buffers: [[f64; 16]; 1000],
     idx_voice_buffers_head: usize,
+    time_s: f64,
 }
 
 #[derive(Clone, Copy)]
 struct Voice {
     pub note_pitch: u8,
-    pub t_samples: usize,
+    pub time_started_s: f64,
 }
 
 impl Default for Instance {
@@ -39,6 +38,7 @@ impl Default for Instance {
 
         weights_voice_voice[WVoiceVoice(IVoice::Pitch, DVoice::OscPitch)] = 1.0;
         weights_voice_voice[WVoiceVoice(IVoice::Envelope1, DVoice::OscVolume)] = 1.0;
+        weights_voice_voice[WVoiceVoice(IVoice::Envelope1, DVoice::FilterFrequency)] = 1.0;
         // TODO: set more sane defaults
 
         let voice_buffers = [[0.0; 16]; 1000];
@@ -53,11 +53,10 @@ impl Default for Instance {
             voices_dependents: DVoicesMatrix::zeros(),
             oscillator: Default::default(),
             filter1: Default::default(),
-            filter2: Default::default(),
-            filter3: Default::default(),
             voices: [None; 16],
             voice_buffers,
             idx_voice_buffers_head: voice_buffers.len(),
+            time_s: 0.0,
         }
     }
 }
@@ -77,6 +76,9 @@ impl Instance {
     }
 
     pub fn audio_requested(&mut self, buffer: &mut [(f64, f64)], samplerate_in_hz: f64) {
+        self.time_s += (1.0 / samplerate_in_hz) * buffer.len() as f64;
+
+        self.update_independents();
         self.recalculate_dependents();
         
         buffer.iter_mut().for_each(|(l, r)| {
@@ -85,8 +87,6 @@ impl Instance {
             if !audio_available {
                 self.oscillator.audio_requested(&self.voices_dependents, &mut self.voice_buffers, samplerate_in_hz);
                 self.filter1.audio_requested(&self.voices_dependents, &mut self.voice_buffers, samplerate_in_hz);
-                self.filter2.audio_requested(&self.voices_dependents, &mut self.voice_buffers, samplerate_in_hz);
-                self.filter3.audio_requested(&self.voices_dependents, &mut self.voice_buffers, samplerate_in_hz);
                 self.idx_voice_buffers_head = 0;
             }
 
@@ -95,6 +95,17 @@ impl Instance {
 
             self.idx_voice_buffers_head += 1;
         });
+    }
+
+    fn update_independents(&mut self) {
+        // TODO: lfo's
+
+        for idx in 0..16 {
+            if let Some(voice) = self.voices[idx] {
+                let time_elapsed_s = self.time_s - voice.time_started_s;
+                self.voices_independents[IVoices(idx, IVoice::Envelope1)] = f64::min(1.0, f64::max(0.0, 1.0 - f64::powf(time_elapsed_s, 0.07))); // TODO: envelope
+            }
+        }
     }
 
     fn recalculate_dependents(&mut self) {
@@ -124,12 +135,11 @@ impl Instance {
             }
 
             self.voices[idx] = Some(Voice {
-                t_samples: 0,
+                time_started_s: self.time_s,
                 note_pitch: note
             });
 
             self.voices_independents[IVoices(idx, IVoice::Pitch)] = note as f64;
-            self.voices_independents[IVoices(idx, IVoice::Envelope1)] = 1.0;
 
             return;
         }
@@ -138,7 +148,7 @@ impl Instance {
     fn note_off(&mut self, note: u8) {
         for idx in 0..self.voices.len() {
             if let Some(voice) = &self.voices[idx] {
-                self.voices_independents[IVoices(idx, IVoice::Envelope1)] = 0.0;
+                self.voices_independents[IVoices(idx, IVoice::Envelope1)] = 0.0; // TODO: remove
 
                 if voice.note_pitch == note {
                     self.voices[idx] = None;

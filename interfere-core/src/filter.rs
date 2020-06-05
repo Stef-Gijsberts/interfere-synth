@@ -22,7 +22,7 @@ impl Filter {
 
         use std::f64::consts::PI;
 
-        let cutoff_hz = voices_dependents[DVoices(0, DVoice::FilterFrequency)] * 5000.0;
+        let cutoff_hz = voices_dependents[DVoices(0, DVoice::FilterFrequency)] * 10000.0;
 
         let rc = 1.0 / (cutoff_hz*2.0*PI); 
         let dt = 1.0 / samplerate_in_hz; 

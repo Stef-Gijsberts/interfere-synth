@@ -37,7 +37,7 @@ impl Oscillator {
                 .iter_mut()
                 .zip(frequencies_in_hz)
                 .for_each(|(p_in_rad, f_in_hz)| {
-                    *p_in_rad += 2.0 * PI as f64 * f_in_hz / samplerate_in_hz
+                    *p_in_rad += 2.0 * PI * f_in_hz / samplerate_in_hz
                 });
 
             let values = self.phases_in_rad
