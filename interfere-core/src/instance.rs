@@ -72,8 +72,7 @@ impl Instance {
             *r = 0.0;
         });
 
-        self.oscillator
-            .audio_requested(&self.voices_dependents, buffer, samplerate_in_hz);
+        self.oscillator.audio_requested(&self.voices_dependents, buffer, samplerate_in_hz);
     }
 
     fn recalculate_dependents(&mut self) {

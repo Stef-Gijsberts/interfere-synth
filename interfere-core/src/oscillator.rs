@@ -20,20 +20,19 @@ impl Oscillator {
     pub fn audio_requested(
         &mut self,
         voices_dependents: &DVoicesMatrix,
-        buffer: &mut [(f64, f64)],
+        buffer: &mut [[f64; 16]],
         samplerate_in_hz: f64,
     ) {
         use std::f64::consts::PI;
 
-        for (sample_l, sample_r) in buffer {
-            let mut phases_in_rad: [f64; 16] = [0.0; 16];
-
+        for frame in buffer {
             let frequencies_in_hz = self
                 .current_pitches_in_tones
                 .iter()
                 .copied()
                 .map(frequency_from_pitch);
 
+            let mut phases_in_rad: [f64; 16] = [0.0; 16];
             phases_in_rad
                 .iter_mut()
                 .zip(self.phases_in_samples.iter().copied())
@@ -49,10 +48,7 @@ impl Oscillator {
                 .zip(self.current_volumes_in_0.iter())
                 .map(|(sample, volume)| sample * volume);
 
-            let value = values.sum();
-
-            *sample_l = value;
-            *sample_r = value;
+            frame.iter_mut().zip(values).for_each(|(d, s)| *d = s);
 
             self.phases_in_samples.iter_mut().for_each(|p| *p += 1);
 
