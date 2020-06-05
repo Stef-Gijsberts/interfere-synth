@@ -15,7 +15,7 @@ pub type NumGlobalDependents = na::U6;
 pub type NumVoiceDependents = na::U6;
 
 #[derive(Clone, Copy)]
-pub enum IdxDepGlobal {
+pub enum IGlobal {
     One = 0,
     PitchBend,
     LFO1,
@@ -24,14 +24,14 @@ pub enum IdxDepGlobal {
 }
 
 #[derive(Clone, Copy)]
-pub enum IdxIndepGlobal {
+pub enum IVoice {
     Pitch,
     Envelope1,
     Envelope2,
 }
 
 #[derive(Clone, Copy)]
-pub enum GDIdx {
+pub enum DGlobal {
     LFO1Frequency,
     LFO2Frequency,
     Mod1,
@@ -40,38 +40,38 @@ pub enum GDIdx {
 }
 
 #[derive(Clone, Copy, FromPrimitive, Debug)]
-pub enum VoiceDependent {
+pub enum DVoice {
     OscPitch = 0,
     OscVolume,
 }
 
 #[derive(Clone, Copy)]
-pub struct VoicesIndependent(pub usize, pub VI);
+pub struct IVoices(pub usize, pub IVoice);
 
 #[derive(Clone, Copy)]
-pub struct VoicesDependent(pub usize, pub VoiceDependent);
+pub struct DVoices(pub usize, pub DVoice);
 
 #[derive(Clone, Copy)]
-pub struct WeightGlobalGlobal(pub GlobalIndependent, pub GlobalDependent);
+pub struct WGlobalGlobal(pub IGlobal, pub DGlobal);
 
 #[derive(Clone, Copy)]
-pub struct WeightGlobalVoice(pub GlobalIndependent, pub VoiceDependent);
+pub struct WGlobalVoice(pub IGlobal, pub IVoice);
 
 #[derive(Clone, Copy)]
-pub struct WeightVoiceVoice(pub VI, pub VoiceDependent);
+pub struct WVoiceVoice(pub IVoice, pub DVoice);
 
 type Matrix<R, C> = na::MatrixMN<Value, R, C>;
 type Row<C> = Matrix<na::U1, C>;
 
-pub type GlobalIndependents = Row<NumGlobalIndependents>;
-pub type VoicesIndependents = Matrix<NumVoices, NumVoiceIndependents>;
+pub type IGlobalRow = Row<NumGlobalIndependents>;
+pub type IVoicesMatrix = Matrix<NumVoices, NumVoiceIndependents>;
 
-pub type WeightsGlobalGlobal = Matrix<NumGlobalIndependents, NumGlobalDependents>;
-pub type WeightsGlobalVoice = Matrix<NumGlobalIndependents, NumVoiceDependents>;
-pub type WeightsVoiceVoice = Matrix<NumVoiceIndependents, NumVoiceDependents>;
+pub type WGlobalGlobalMatrix = Matrix<NumGlobalIndependents, NumGlobalDependents>;
+pub type WGlobalVoiceMatrix = Matrix<NumGlobalIndependents, NumVoiceDependents>;
+pub type WVoiceVoiceMatrix = Matrix<NumVoiceIndependents, NumVoiceDependents>;
 
-pub type GlobalDependents = Row<NumGlobalDependents>;
-pub type VoicesDependents = Matrix<NumVoices, NumVoiceDependents>;
+pub type DGlobalMatrix = Row<NumGlobalDependents>;
+pub type DVoicesMatrix = Matrix<NumVoices, NumVoiceDependents>;
 
 macro_rules! impl_row_index {
     ($indexable_type:ty, $index_type:ty) => {
