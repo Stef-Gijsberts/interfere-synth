@@ -15,7 +15,7 @@ pub type NumGlobalDependents = na::U6;
 pub type NumVoiceDependents = na::U6;
 
 #[derive(Clone, Copy)]
-pub enum GlobalIndependent {
+pub enum IdxDepGlobal {
     One = 0,
     PitchBend,
     LFO1,
@@ -24,14 +24,14 @@ pub enum GlobalIndependent {
 }
 
 #[derive(Clone, Copy)]
-pub enum VoiceIndependent {
+pub enum IdxIndepGlobal {
     Pitch,
     Envelope1,
     Envelope2,
 }
 
 #[derive(Clone, Copy)]
-pub enum GlobalDependent {
+pub enum GDIdx {
     LFO1Frequency,
     LFO2Frequency,
     Mod1,
@@ -46,7 +46,7 @@ pub enum VoiceDependent {
 }
 
 #[derive(Clone, Copy)]
-pub struct VoicesIndependent(pub usize, pub VoiceIndependent);
+pub struct VoicesIndependent(pub usize, pub VI);
 
 #[derive(Clone, Copy)]
 pub struct VoicesDependent(pub usize, pub VoiceDependent);
@@ -58,7 +58,7 @@ pub struct WeightGlobalGlobal(pub GlobalIndependent, pub GlobalDependent);
 pub struct WeightGlobalVoice(pub GlobalIndependent, pub VoiceDependent);
 
 #[derive(Clone, Copy)]
-pub struct WeightVoiceVoice(pub VoiceIndependent, pub VoiceDependent);
+pub struct WeightVoiceVoice(pub VI, pub VoiceDependent);
 
 type Matrix<R, C> = na::MatrixMN<Value, R, C>;
 type Row<C> = Matrix<na::U1, C>;

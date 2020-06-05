@@ -1,5 +1,5 @@
 use crate::values::{
-    GlobalDependents, GlobalIndependent, GlobalIndependents, VoiceDependent, VoiceIndependent,
+    GlobalDependents, GlobalIndependent, GlobalIndependents, VoiceDependent, VI,
     VoicesDependents, VoicesIndependent, VoicesIndependents, WeightGlobalVoice, WeightVoiceVoice,
     WeightsGlobalGlobal, WeightsGlobalVoice, WeightsVoiceVoice,
 };
@@ -36,8 +36,8 @@ impl Default for Instance {
             .row_mut(GlobalIndependent::One as usize)
             .fill(1.0);
 
-        weights_voice_voice[WeightVoiceVoice(VoiceIndependent::Pitch, VoiceDependent::OscPitch)] = 1.0;
-        weights_voice_voice[WeightVoiceVoice(VoiceIndependent::Envelope1, VoiceDependent::OscVolume)] = 1.0;
+        weights_voice_voice[WeightVoiceVoice(VI::Pitch, VoiceDependent::OscPitch)] = 1.0;
+        weights_voice_voice[WeightVoiceVoice(VI::Envelope1, VoiceDependent::OscVolume)] = 1.0;
         // TODO: set more sane defaults
 
         Instance {
@@ -111,8 +111,8 @@ impl Instance {
                 note_pitch: note
             });
 
-            self.voices_independents[VoicesIndependent(idx, VoiceIndependent::Pitch)] = note as f64;
-            self.voices_independents[VoicesIndependent(idx, VoiceIndependent::Envelope1)] = 1.0;
+            self.voices_independents[VoicesIndependent(idx, VI::Pitch)] = note as f64;
+            self.voices_independents[VoicesIndependent(idx, VI::Envelope1)] = 1.0;
 
             return;
         }
@@ -121,7 +121,7 @@ impl Instance {
     fn note_off(&mut self, note: u8) {
         for idx in 0..self.voices.len() {
             if let Some(voice) = &self.voices[idx] {
-                self.voices_independents[VoicesIndependent(idx, VoiceIndependent::Envelope1)] = 0.0;
+                self.voices_independents[VoicesIndependent(idx, VI::Envelope1)] = 0.0;
 
                 if voice.note_pitch == note {
                     self.voices[idx] = None;
