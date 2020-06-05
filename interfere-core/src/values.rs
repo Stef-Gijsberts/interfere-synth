@@ -8,11 +8,11 @@ pub type Value = f64;
 
 pub type NumVoices = na::U16;
 
-pub type NumGlobalIndependents = na::U5;
-pub type NumVoiceIndependents = na::U7;
+pub type NumIGlobal = na::U5;
+pub type NumIVoice = na::U7;
 
-pub type NumGlobalDependents = na::U6;
-pub type NumVoiceDependents = na::U6;
+pub type NumDGlobal = na::U4;
+pub type NumDVoice = na::U6;
 
 #[derive(Clone, Copy)]
 pub enum IGlobal {
@@ -63,58 +63,73 @@ pub struct WVoiceVoice(pub IVoice, pub DVoice);
 type Matrix<R, C> = na::MatrixMN<Value, R, C>;
 type Row<C> = Matrix<na::U1, C>;
 
-pub type IGlobalRow = Row<NumGlobalIndependents>;
-pub type IVoicesMatrix = Matrix<NumVoices, NumVoiceIndependents>;
+pub type IGlobalRow = Row<NumIGlobal>;
+pub type IVoicesMatrix = Matrix<NumVoices, NumIVoice>;
 
-pub type WGlobalGlobalMatrix = Matrix<NumGlobalIndependents, NumGlobalDependents>;
-pub type WGlobalVoiceMatrix = Matrix<NumGlobalIndependents, NumVoiceDependents>;
-pub type WVoiceVoiceMatrix = Matrix<NumVoiceIndependents, NumVoiceDependents>;
+pub type WGlobalGlobalMatrix = Matrix<NumIGlobal, NumDGlobal>;
+pub type WGlobalVoiceMatrix = Matrix<NumIGlobal, NumDVoice>;
+pub type WVoiceVoiceMatrix = Matrix<NumIVoice, NumDVoice>;
 
-pub type DGlobalMatrix = Row<NumGlobalDependents>;
-pub type DVoicesMatrix = Matrix<NumVoices, NumVoiceDependents>;
+pub type DGlobalRow = Row<NumDGlobal>;
+pub type DVoicesMatrix = Matrix<NumVoices, NumDVoice>;
+
+
 
 macro_rules! impl_row_index {
-    ($indexable_type:ty, $index_type:ty) => {
-        impl ops::Index<$index_type> for $indexable_type {
+    ($row_type: ty, $index_type: ty, $num_columns: ty) => {
+        impl<'a> na::indexing::MatrixIndex<'a, Value, na::U1, $num_columns, na::storage::Owned<Value, na::U1, $num_columns>> for $index_type {
             type Output = Value;
 
-            fn index(&self, index: $index_type) -> &Value {
-                self.index(index as usize)
+            fn contained_by(&self, matrix: &$row_type) -> bool {
+                (*self as usize) < matrix.ncols()
+            }
+
+            unsafe fn get_unchecked(self, matrix: &'a $row_type) -> Self::Output {
+                matrix[self as usize]
             }
         }
 
-        impl ops::IndexMut<$index_type> for $indexable_type {
-            fn index_mut(&mut self, index: $index_type) -> &mut Value {
-                self.index_mut(index as usize)
+        impl<'a> na::indexing::MatrixIndexMut<'a, Value, na::U1, $num_columns, na::storage::Owned<Value, na::U1, $num_columns>> for $index_type {
+            type OutputMut = &'a mut Self::Output;
+
+            unsafe fn get_unchecked_mut(self, matrix: &'a mut $row_type) -> Self::OutputMut {
+                &mut matrix[self as usize]
             }
         }
     };
 }
 
 macro_rules! impl_matrix_index {
-    ($indexable_type:ty, $index_type:ty) => {
-        impl ops::Index<$index_type> for $indexable_type {
+    ($row_type: ty, $index_type: ty, $num_rows: ty, $num_columns: ty) => {
+        impl<'a> na::indexing::MatrixIndex<'a, Value, $num_rows, $num_columns, na::storage::Owned<Value, $num_rows, $num_columns>> for $index_type {
             type Output = Value;
 
-            fn index(&self, index: $index_type) -> &Value {
-                self.index((index.0 as usize, index.1 as usize))
+            fn contained_by(&self, matrix: &$row_type) -> bool {
+                (self.0 as usize) < matrix.ncols() && (self.1 as usize) < matrix.nrows()
+            }
+
+            unsafe fn get_unchecked(self, matrix: &'a $row_type) -> Self::Output {
+                matrix[(self.0 as usize, self.1 as usize)]
             }
         }
 
-        impl ops::IndexMut<$index_type> for $indexable_type {
-            fn index_mut(&mut self, index: $index_type) -> &mut Value {
-                self.index_mut((index.0 as usize, index.1 as usize))
+        impl<'a> na::indexing::MatrixIndexMut<'a, Value, $num_rows, $num_columns, na::storage::Owned<Value, $num_rows, $num_columns>> for $index_type {
+            type OutputMut = &'a mut Self::Output;
+
+            unsafe fn get_unchecked_mut(self, matrix: &'a mut $row_type) -> Self::OutputMut {
+                &mut matrix[(self.0 as usize, self.1 as usize)]
             }
         }
     };
 }
 
-impl_row_index!(GlobalIndependents, GlobalIndependent);
-impl_matrix_index!(VoicesIndependents, VoicesIndependent);
 
-impl_matrix_index!(WeightsGlobalGlobal, WeightGlobalGlobal);
-impl_matrix_index!(WeightsGlobalVoice, WeightGlobalVoice);
-impl_matrix_index!(WeightsVoiceVoice, WeightVoiceVoice);
+impl_row_index!(IGlobalRow, IGlobal, NumIGlobal);
+impl_row_index!(DGlobalRow, DGlobal, NumDGlobal);
 
-impl_row_index!(GlobalDependents, GlobalDependent);
-impl_matrix_index!(VoicesDependents, VoicesDependent);
+impl_matrix_index!(WGlobalGlobalMatrix, WGlobalGlobal, NumIGlobal, NumDGlobal);
+impl_matrix_index!(WGlobalVoiceMatrix, WGlobalVoice, NumIGlobal, NumDVoice);
+impl_matrix_index!(WVoiceVoiceMatrix, WVoiceVoice, NumIVoice, NumDVoice);
+
+impl_matrix_index!(IVoicesMatrix, IVoices, NumVoices, NumIVoice);
+impl_matrix_index!(DVoicesMatrix, DVoices, NumVoices, NumDVoice);
