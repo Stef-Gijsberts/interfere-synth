@@ -15,7 +15,7 @@ use num_traits::{FromPrimitive, ToPrimitive};
 use vst::plugin_main;
 plugin_main!(InterfereVST);
 
-const NUM_PARAMETERS: i32 = 2; // TODO: not hardcode?
+const NUM_PARAMETERS: i32 = 3; // TODO: not hardcode?
 
 struct InterfereVST {
     instance: Instance,
@@ -103,9 +103,7 @@ impl Plugin for InterfereVST {
         let mut stereo_out = l[0].iter_mut().zip(r[0].iter_mut());
 
         stereo_out.for_each(|(l_out, r_out)| {
-            // TODO: waarom werkt dit? Zou er geen overflow moeten zijn?
-            // (zelfde geval bij instance)
-            let frames_available = self.buffer.len() - self.idx_buffer_head > 0;
+            let frames_available = self.buffer.len() > self.idx_buffer_head;
 
             if !frames_available {
                 self.instance.update_parameters(

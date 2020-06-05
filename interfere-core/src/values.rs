@@ -9,10 +9,10 @@ pub type Value = f64;
 pub type NumVoices = na::U16;
 
 pub type NumIGlobal = na::U5;
-pub type NumIVoice = na::U7;
+pub type NumIVoice = na::U3;
 
-pub type NumDGlobal = na::U4;
-pub type NumDVoice = na::U6;
+pub type NumDGlobal = na::U5;
+pub type NumDVoice = na::U3;
 
 #[derive(Clone, Copy)]
 pub enum IGlobal {
@@ -43,6 +43,7 @@ pub enum DGlobal {
 pub enum DVoice {
     OscPitch = 0,
     OscVolume,
+    FilterFrequency,
 }
 
 #[derive(Clone, Copy)]

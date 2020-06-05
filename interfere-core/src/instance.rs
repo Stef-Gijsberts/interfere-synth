@@ -1,5 +1,5 @@
 use crate::values::*;
-use crate::Oscillator;
+use crate::{Oscillator, Filter};
 
 pub struct Instance {
     global_independents: IGlobalRow,
@@ -10,6 +10,9 @@ pub struct Instance {
     global_dependents: DGlobalRow,
     voices_dependents: DVoicesMatrix,
     oscillator: Oscillator,
+    filter1: Filter,
+    filter2: Filter,
+    filter3: Filter,
     voices: [Option<Voice>; 16],
     voice_buffers: [[f64; 16]; 1000],
     idx_voice_buffers_head: usize,
@@ -49,6 +52,9 @@ impl Default for Instance {
             global_dependents: DGlobalRow::zeros(),
             voices_dependents: DVoicesMatrix::zeros(),
             oscillator: Default::default(),
+            filter1: Default::default(),
+            filter2: Default::default(),
+            filter3: Default::default(),
             voices: [None; 16],
             voice_buffers,
             idx_voice_buffers_head: voice_buffers.len(),
@@ -74,10 +80,13 @@ impl Instance {
         self.recalculate_dependents();
         
         buffer.iter_mut().for_each(|(l, r)| {
-            let audio_available = self.voice_buffers.len() - self.idx_voice_buffers_head > 0;
+            let audio_available = self.voice_buffers.len() > self.idx_voice_buffers_head;
 
             if !audio_available {
-                self.oscillator.audio_requested(&self.voices_dependents, &mut self.voice_buffers[self.idx_voice_buffers_head..], samplerate_in_hz);
+                self.oscillator.audio_requested(&self.voices_dependents, &mut self.voice_buffers, samplerate_in_hz);
+                self.filter1.audio_requested(&self.voices_dependents, &mut self.voice_buffers, samplerate_in_hz);
+                self.filter2.audio_requested(&self.voices_dependents, &mut self.voice_buffers, samplerate_in_hz);
+                self.filter3.audio_requested(&self.voices_dependents, &mut self.voice_buffers, samplerate_in_hz);
                 self.idx_voice_buffers_head = 0;
             }
 
