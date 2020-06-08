@@ -43,7 +43,7 @@ The customer and supplier never meet. Instead, they
 only ever meet the dealer. If the dealer sells to another customer, the supplier
 will never notice.
 
-The DAW is a customer, and it wants audio data. It gets audio from its dealer, 
+The DAW is a customer, asking audio data from its dealer, 
 *interfere-vst*, which gets audio from its supplier, *interfere-core*.
 
 The advantage of this design shows when another standard than
