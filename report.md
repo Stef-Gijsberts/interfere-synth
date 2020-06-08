@@ -36,7 +36,7 @@ role of each component. Explain why the components together actually do what
 they are supposed to do. Make sure that this distinction between the
 components is in line with the way in which you implemented the system. -->
 Interfere consists of two parts: *interfere-core* and *interfere-vst*. An analogy
-with a drugs deal shows why (bear with me):
+with a drugs deal shows why:
 
 Consider a drugs deal involving a *customer*, a *dealer* and a *supplier*.
 The customer and supplier never meet. Instead, they
