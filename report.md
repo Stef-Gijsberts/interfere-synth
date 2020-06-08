@@ -49,7 +49,7 @@ The DAW is a customer, and it wants audio data. It gets audio from its dealer,
 The advantage of this design shows when another standard than
 VST must be implemented. Then, just like how the dealer can sell to another
 customer without the supplier knowing, another implementation can provide audio to a DAW
-using another protocol. This saves time, because it is smaller and simpler than *interfere-core*.
+using another protocol. This saves time, because the 'dealer' is smaller and simpler than *interfere-core*.
 
 ## Detailed Design
 <!-- Give a detailed design in terms of data structures and algorithms, for
