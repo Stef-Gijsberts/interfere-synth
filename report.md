@@ -2,7 +2,7 @@
 <!-- Give a general description of your system. For example, what are the
 goals of the system? Who are the users of the system? Why are they interested
 in using this system? -->
-This project report describes *Interfere*, a musical instrument.
+This project report describes *Interfere*, a digital musical instrument.
 
 # Description
 
