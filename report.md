@@ -35,7 +35,7 @@ interconnections between those components. You should explicitly describe the
 role of each component. Explain why the components together actually do what
 they are supposed to do. Make sure that this distinction between the
 components is in line with the way in which you implemented the system. -->
-Interfere is divided into two parts, which I will call the *supplier* and the *dealer*.
+Interfere is divided into two parts: the *supplier* and the *dealer*.
 
 ## Detailed Design
 <!-- Give a detailed design in terms of data structures and algorithms, for
