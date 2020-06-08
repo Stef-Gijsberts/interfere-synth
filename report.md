@@ -2,6 +2,18 @@
 <!-- Give a general description of your system. For example, what are the
 goals of the system? Who are the users of the system? Why are they interested
 in using this system? -->
+Interfere is a software sythesizer. The goal of a software synthesizer is to
+enable the user to create sounds to their liking. A typical user of a software
+synthesizer is a musician using a Digital Audio Workstation (DAW).
+
+A DAW is a computer program that processes several input datastreams, such as data
+from a connected microphone or musical keyboard, with the ultimate goal of producing
+a stream of audiosamples. This is often done in realtime.
+
+Most DAWs can load third party instruments and effects as *audio plugins*. Several
+standardized interfaces exist for audio plugins, of which the Virtual Studio Technology
+(VST) standard is the most widely used and implemented. Interfere implements the
+VST standard.
 
 # Description
 
