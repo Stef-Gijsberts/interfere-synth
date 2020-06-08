@@ -6,7 +6,7 @@ This project report describes *Interfere*, a musical instrument.
 
 Musicians can use Interfere in their Digital Audio Workstation (DAW). Such a
 computer progam is like a digital atelier for music, where instruments and effects
-can be easily found and used.
+are organized and used.
 
 # Description
 
