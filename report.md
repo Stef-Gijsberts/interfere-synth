@@ -2,7 +2,7 @@
 <!-- Give a general description of your system. For example, what are the
 goals of the system? Who are the users of the system? Why are they interested
 in using this system? -->
-This project report describes *Interfere*, a digital musical instrument.
+This project report describes *Interfere*, a musical instrument.
 
 Musicians can use Interfere in their Digital Audio Workstation (DAW). Such a
 computer progam is like a digital atelier for music, where instruments and effects
