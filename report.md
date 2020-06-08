@@ -4,8 +4,8 @@ goals of the system? Who are the users of the system? Why are they interested
 in using this system? -->
 This project report describes *Interfere*, a musical instrument.
 
-Musicians can use Interfere in their Digital Audio Workstation (DAW). Such a
-computer progam is like a digital atelier for music, where instruments and effects
+Musicians can use Interfere in a Digital Audio Workstation (DAW). Such a
+computer progam is a digital studio for music, where instruments and effects
 are organized and used.
 
 # Description
