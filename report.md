@@ -5,8 +5,8 @@ in using this system? -->
 Interfere is a software sythesizer. Musicians use software synthesizers as instruments.
 This is often done inside a Digital Audio Workstation (DAW).
 
-A DAW is a computer program that processes datastreams, for example coming
-from a microphone or musical keyboard, with the ultimate goal of
+A (software) DAW is a computer program that processes several datastreams, such as the output
+of a microphone or musical keyboard, with the ultimate goal of
 producing sound. This is often done in realtime.
 
 Most DAWs can load third party instruments (producing sound) and effects (altering sound)
