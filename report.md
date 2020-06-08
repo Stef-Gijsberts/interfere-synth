@@ -4,8 +4,9 @@ goals of the system? Who are the users of the system? Why are they interested
 in using this system? -->
 This project report describes *Interfere*, a digital musical instrument.
 
-Musicians can use Interfere in their Digital Audio Workstation (DAW). Such a computer progam is like a digital atelier for music, where instruments and effects can be easily
-found and used.
+Musicians can use Interfere in their Digital Audio Workstation (DAW). Such a
+computer progam is like a digital atelier for music, where instruments and effects
+can be easily found and used.
 
 # Description
 
@@ -34,6 +35,7 @@ interconnections between those components. You should explicitly describe the
 role of each component. Explain why the components together actually do what
 they are supposed to do. Make sure that this distinction between the
 components is in line with the way in which you implemented the system. -->
+Interfere is divided into two parts, which I will call the *supplier* and the *dealer*.
 
 ## Detailed Design
 <!-- Give a detailed design in terms of data structures and algorithms, for
