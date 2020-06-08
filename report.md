@@ -2,7 +2,8 @@
 <!-- Give a general description of your system. For example, what are the
 goals of the system? Who are the users of the system? Why are they interested
 in using this system? -->
-Interfere is a software sythesizer. Musicians use software synthesizers as instruments.
+Interfere is a software sythesizer. Software synthesizers are used by musicians
+as instruments.
 This is often done inside a Digital Audio Workstation (DAW).
 
 A (software) DAW is a computer program that processes several datastreams, such as the output
