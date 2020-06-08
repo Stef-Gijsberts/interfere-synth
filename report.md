@@ -43,7 +43,7 @@ The DAW is like a drug customer, getting audio data from its dealer,
 The customer and supplier never meet. Instead, they
 only ever meet the dealer. If the dealer would sell to another customer, the supplier would never notice.
 
-The benifits of this design show when another standard than
+The advantages of this design show when another standard than
 VST must be implemented. Then, just like how the dealer can sell to another
 customer without the supplier knowing, another implementation can provide audio to a DAW
 using another protocol. This saves time, because the 'dealer' is smaller and simpler than *interfere-core*.
