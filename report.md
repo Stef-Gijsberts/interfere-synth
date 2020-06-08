@@ -37,7 +37,7 @@ they are supposed to do. Make sure that this distinction between the
 components is in line with the way in which you implemented the system. -->
 Interfere consists of two parts: *interfere-core* and *interfere-vst*.
 
-The DAW is like a drug customer, asking audio data from its dealer, 
+The DAW is like a drug customer, getting audio data from its dealer, 
 *interfere-vst*, which gets its audio from the supplier, *interfere-core*.
 
 The customer and supplier never meet. Instead, they
