@@ -39,7 +39,7 @@ Interfere consists of two parts: *interfere-core* and *interfere-vst*. I will
 illustrate the reasoning behind this using an analogy:
 
 Consider a drugs deal involving a *customer*, a *dealer* and a *supplier*.
-The customer and supplier never meet. Instead, they both
+The customer and supplier never meet. Instead, they
 only ever meet the dealer. The dealer could sell to another customer,
 and the supplier would never notice.
 
@@ -47,9 +47,9 @@ The DAW is a customer, and it wants audio data. It requests it from the dealer,
 *interfere-vst*. *interfere-vst*, in its turn, requests audio from the supplier,
 *interfere-core*.
 
-Now, if later on another standard than vst must be used, then the core does not 
-have to be modified. This can save a lot of time, because the core is much bigger
-than the vst implementation.
+The advantage of this design shows when another standard than
+VST must be used. The core then does not have to be modified. This saves time,
+because it is bigger and more complex than *interfere-vst*.
 
 ## Detailed Design
 <!-- Give a detailed design in terms of data structures and algorithms, for
