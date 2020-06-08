@@ -35,21 +35,21 @@ interconnections between those components. You should explicitly describe the
 role of each component. Explain why the components together actually do what
 they are supposed to do. Make sure that this distinction between the
 components is in line with the way in which you implemented the system. -->
-Interfere consists of two parts: *interfere-core* and *interfere-vst*. I will
-illustrate the reasoning behind this using an analogy:
+Interfere consists of two parts: *interfere-core* and *interfere-vst*. An analogy
+with a drugs deal shows why this distinction is made:
 
 Consider a drugs deal involving a *customer*, a *dealer* and a *supplier*.
 The customer and supplier never meet. Instead, they
-only ever meet the dealer. The dealer could sell to another customer,
-and the supplier would never notice.
+only ever meet the dealer. If the dealer sells to another customer, the supplier
+will never notice.
 
-The DAW is a customer, and it wants audio data. It requests it from the dealer, 
+The DAW is the customer, and it wants audio data. It requests it from its dealer, 
 *interfere-vst*. *interfere-vst*, in its turn, requests audio from the supplier,
 *interfere-core*.
 
 The advantage of this design shows when another standard than
-VST must be used. The core then does not have to be modified. This saves time,
-because it is bigger and more complex than *interfere-vst*.
+VST must be implemented. Then just the 'dealer' must be modified. This saves time,
+because it is smaller and simpler than *interfere-core*.
 
 ## Detailed Design
 <!-- Give a detailed design in terms of data structures and algorithms, for
