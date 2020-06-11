@@ -1,6 +1,6 @@
 use super::{MidiProcessor, Envelope, LFO};
 
-use crate::values::{IGlobalRow, IVoicesMatrix};
+use crate::values::{IGlobalRow, IVoicesMatrix, IGlobal};
 
 
 #[derive(Clone, Copy)]
@@ -29,7 +29,9 @@ impl IndependentUpdater {
         self.lfo.advance_time_s(dt_s);
     }
 
-    pub fn values_requested(&mut self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
+    pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
+        iglobal[IGlobal::One] = 1.0;
+
         self.envelope.values_requested(iglobal, ivoices);
         self.lfo.values_requested(iglobal, ivoices);
     }

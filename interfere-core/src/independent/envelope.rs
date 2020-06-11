@@ -12,7 +12,7 @@ impl Envelope {
         self.time_s += dt_s;
     }
 
-    pub fn values_requested(&mut self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
+    pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
         // TODO
     }
 }
