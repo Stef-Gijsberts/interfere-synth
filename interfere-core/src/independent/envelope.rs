@@ -26,6 +26,7 @@ impl Envelope {
         let release_s = dglobal[DGlobal::Env1Release];
 
         for (idx, maybe_voice) in (0..).zip(voices.iter()) {
+            // TODO: remove notes when fully played
             let val = match maybe_voice {
                 Some(voice) => {
                     let dt_s = self.time_s - voice.time_started_s;
@@ -43,12 +44,12 @@ impl Envelope {
 }
 
 fn adsr(attack_s: f64, decay_s: f64, sustain_0: f64, release_s: f64, t_s: f64, t_released_s: Option<f64>) -> f64 {
-    if t_s < attack_s {
+    if t_s <= attack_s {
         return t_s / attack_s;
     }
 
     if t_s < attack_s + decay_s {
-        return 1.0 - ((t_s - attack_s) / decay_s);
+        return 1.0 - (1.0 - sustain_0) * ((t_s - attack_s) / decay_s);
     }
 
     match t_released_s {

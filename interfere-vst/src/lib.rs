@@ -8,14 +8,13 @@ use vst::event::Event;
 use vst::plugin::{CanDo, Category, Info, Plugin, PluginParameters};
 use vst::util::ParameterTransfer;
 
-use num_traits::FromPrimitive;
 
 // A macro to generate the necessary exposed functions for the library to be recognized as a VST
 // plugin.
 use vst::plugin_main;
 plugin_main!(InterfereVST);
 
-const NUM_PARAMETERS: i32 = 3; // TODO: not hardcode?
+const NUM_PARAMETERS: i32 = 12; // TODO: not hardcode?
 
 struct InterfereVST {
     instance: Instance,
@@ -110,7 +109,7 @@ impl Plugin for InterfereVST {
                     self.parameters
                         .0
                         .iterate(true)
-                        .map(|(idx, v)| (Parameter::from_usize(idx).unwrap(), v as f64)),
+                        .map(|(idx, v)| (Parameter::from_i32(idx as i32).unwrap(), v as f64)),
                 );
                 self.instance
                     .audio_requested(&mut self.buffer, self.sample_rate_hz);

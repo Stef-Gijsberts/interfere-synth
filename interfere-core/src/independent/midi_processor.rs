@@ -39,7 +39,7 @@ impl MidiProcessor {
         for maybe_voice in voices {
             if let Some(voice) = maybe_voice {
                 if voice.note_pitch == note {
-                    *maybe_voice = None;
+                    voice.time_released_s = Some(self.time_s);
                 }
             }
         }

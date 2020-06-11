@@ -26,8 +26,11 @@ impl Default for DependentDeriver {
 
 impl DependentDeriver {
     pub fn update_parameters(&mut self, updates: impl Iterator<Item = (Parameter, f64)>) {
-        for (idx, new_value) in updates {
-            self.w_global_voice[WGlobalVoice(IGlobal::One, idx)] = new_value;
+        for (param, new_value) in updates {
+            match param {
+                Parameter::Global(idx) => self.w_global_global[WGlobalGlobal(IGlobal::One, idx)] = new_value,
+                Parameter::Voice(idx) => self.w_global_voice[WGlobalVoice(IGlobal::One, idx)] = new_value,
+            }
         }
     }
 
