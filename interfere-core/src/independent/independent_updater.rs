@@ -37,6 +37,6 @@ impl IndependentUpdater {
 
         self.envelope.values_requested(iglobal, ivoices, &mut self.voices, dglobal);
         self.pitch.values_requested(ivoices, self.voices);
-        self.lfo.values_requested(iglobal);
+        self.lfo.values_requested(iglobal, dglobal);
     }
 }

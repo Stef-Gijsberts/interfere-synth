@@ -9,8 +9,10 @@ pub struct DependentDeriver {
 impl Default for DependentDeriver {
     fn default() -> DependentDeriver {
         let w_global_global = WGlobalGlobalMatrix::zeros();
-        let w_global_voice = WGlobalVoiceMatrix::zeros();
+        let mut w_global_voice = WGlobalVoiceMatrix::zeros();
         let mut w_voice_voice = WVoiceVoiceMatrix::zeros();
+
+        w_global_voice[WGlobalVoice(IGlobal::LFO, DVoice::OscPitch)] = 0.5;
 
         w_voice_voice[WVoiceVoice(IVoice::Pitch, DVoice::OscPitch)] = 1.0;
         w_voice_voice[WVoiceVoice(IVoice::Envelope, DVoice::OscVolume)] = 1.0;

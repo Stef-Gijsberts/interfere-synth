@@ -22,6 +22,22 @@ impl MidiProcessor {
     }
 
     fn note_on(&mut self, voices: &mut [Option<Voice>; 16], note: u8) {
+        // If there already exists a voice with this note, retrigger it
+        for maybe_voice in voices.iter_mut() {
+            if let Some(voice) = maybe_voice {
+                if voice.note_pitch == note {
+                    *maybe_voice = Some(Voice {
+                        time_started_s: self.time_s,
+                        time_released_s: None,
+                        note_pitch: note,
+                    });
+
+                    return;
+                }
+            }
+        }
+
+        // otherwise, add it if there is a free spot
         for maybe_voice in voices {
             if maybe_voice.is_none() {
                 *maybe_voice = Some(Voice {
@@ -39,6 +55,7 @@ impl MidiProcessor {
         for maybe_voice in voices {
             if let Some(voice) = maybe_voice {
                 if voice.note_pitch == note {
+
                     voice.time_released_s = Some(self.time_s);
                 }
             }

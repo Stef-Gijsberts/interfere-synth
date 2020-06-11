@@ -1,4 +1,3 @@
-mod global;
 mod voice;
 
 mod audio_generator;
