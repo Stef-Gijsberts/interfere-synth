@@ -17,7 +17,8 @@ impl Default for AudioGenerator {
         AudioGenerator {
             idx_head_voicebuffer,
             voicebuffer,
-            ..Default::default()
+            oscillator: Default::default(),
+            filter: Default::default(),
         }
     }
 }

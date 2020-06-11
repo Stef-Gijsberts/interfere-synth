@@ -20,7 +20,9 @@ impl Default for Instance {
             dvoices: DVoicesMatrix::zeros(),
             iglobal: IGlobalRow::zeros(),
             ivoices: IVoicesMatrix::zeros(),
-            ..Default::default()
+            independent_updater: Default::default(),
+            dependent_deriver: Default::default(),
+            audio_generator: Default::default(),
         }
     }
 }
