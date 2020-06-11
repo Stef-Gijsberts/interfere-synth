@@ -1,11 +1,12 @@
 use super::{Envelope, MidiProcessor, LFO, Pitch};
 
-use crate::values::{IGlobal, IGlobalRow, IVoicesMatrix};
+use crate::values::{IGlobal, IGlobalRow, IVoicesMatrix, DGlobalRow};
 
 #[derive(Clone, Copy)]
 pub struct Voice {
     pub note_pitch: u8,
     pub time_started_s: f64,
+    pub time_released_s: Option<f64>,
 }
 
 #[derive(Default)]
@@ -31,10 +32,10 @@ impl IndependentUpdater {
         self.lfo.set_time_s(self.time_s);
     }
 
-    pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
+    pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix, dglobal: &DGlobalRow) {
         iglobal[IGlobal::One] = 1.0;
 
-        self.envelope.values_requested(iglobal, ivoices, self.voices);
+        self.envelope.values_requested(iglobal, ivoices, self.voices, dglobal);
         self.pitch.values_requested(ivoices, self.voices);
         self.lfo.values_requested(iglobal);
     }

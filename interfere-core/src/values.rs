@@ -11,7 +11,7 @@ pub type NumVoices = na::U16;
 pub type NumIGlobal = na::U5;
 pub type NumIVoice = na::U3;
 
-pub type NumDGlobal = na::U5;
+pub type NumDGlobal = na::U9;
 pub type NumDVoice = na::U3;
 
 #[derive(Clone, Copy)]
@@ -34,6 +34,10 @@ pub enum IVoice {
 pub enum DGlobal {
     LFO1Frequency,
     LFO2Frequency,
+    Env1Attack,
+    Env1Decay,
+    Env1Sustain,
+    Env1Release,
     Mod1,
     Mod2,
     Mod3,

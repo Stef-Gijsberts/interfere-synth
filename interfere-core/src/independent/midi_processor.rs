@@ -26,6 +26,7 @@ impl MidiProcessor {
             if maybe_voice.is_none() {
                 *maybe_voice = Some(Voice {
                     time_started_s: self.time_s,
+                    time_released_s: None,
                     note_pitch: note,
                 });
 

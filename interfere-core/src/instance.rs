@@ -40,8 +40,7 @@ impl Instance {
         self.independent_updater
             .advance_time_s((1.0 / samplerate_in_hz) * buffer.len() as f64);
 
-        self.independent_updater
-            .values_requested(&mut self.iglobal, &mut self.ivoices);
+        self.independent_updater.values_requested(&mut self.iglobal, &mut self.ivoices, &self.dglobal);
         self.dependent_deriver.values_requested(
             &mut self.dglobal,
             &mut self.dvoices,
