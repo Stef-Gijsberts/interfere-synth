@@ -9,16 +9,15 @@ pub type Value = f64;
 
 pub type NumVoices = na::U16;
 
-pub type NumIGlobal = na::U3;
+pub type NumIGlobal = na::U2;
 pub type NumIVoice = na::U2;
 
-pub type NumDGlobal = na::U8;
+pub type NumDGlobal = na::U5;
 pub type NumDVoice = na::U3;
 
 #[derive(Clone, Copy, Debug, FromPrimitive)]
 pub enum IGlobal {
     One = 0,
-    PitchBend,
     LFO,
 }
 
@@ -35,9 +34,6 @@ pub enum DGlobal {
     EnvDecay,
     EnvSustain,
     EnvRelease,
-    Mod1,
-    Mod2,
-    Mod3,
 }
 
 #[derive(Clone, Copy, Debug, FromPrimitive)]

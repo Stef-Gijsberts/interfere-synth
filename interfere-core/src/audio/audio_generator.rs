@@ -4,7 +4,9 @@ use super::voice::{Filter, Oscillator};
 
 pub struct AudioGenerator {
     oscillator: Oscillator,
-    filter: Filter,
+    filter1: Filter,
+    filter2: Filter,
+    filter3: Filter,
     voicebuffer: [[f64; 16]; 1000],
     idx_head_voicebuffer: usize,
 }
@@ -18,7 +20,9 @@ impl Default for AudioGenerator {
             idx_head_voicebuffer,
             voicebuffer,
             oscillator: Default::default(),
-            filter: Default::default(),
+            filter1: Default::default(),
+            filter2: Default::default(),
+            filter3: Default::default(),
         }
     }
 }
@@ -40,7 +44,19 @@ impl AudioGenerator {
                     samplerate_in_hz,
                     dvoices,
                 );
-                self.filter.voices_audio_requested(
+                self.filter1.voices_audio_requested(
+                    &mut self.voicebuffer,
+                    samplerate_in_hz,
+                    dvoices,
+                );
+
+                self.filter2.voices_audio_requested(
+                    &mut self.voicebuffer,
+                    samplerate_in_hz,
+                    dvoices,
+                );
+                
+                self.filter3.voices_audio_requested(
                     &mut self.voicebuffer,
                     samplerate_in_hz,
                     dvoices,
@@ -52,7 +68,7 @@ impl AudioGenerator {
             *l = self.voicebuffer[self.idx_head_voicebuffer]
                 .iter()
                 .sum::<f64>()
-                / 16.0; // TODO: mix per voice?
+                / 4.0;
             *r = *l;
 
             self.idx_head_voicebuffer += 1;

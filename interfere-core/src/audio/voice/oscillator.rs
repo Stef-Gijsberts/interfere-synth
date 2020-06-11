@@ -33,6 +33,14 @@ impl Oscillator {
                 .iter()
                 .copied()
                 .map(f64::sin)
+                .map(|x| {
+                    if x > 0.0 {
+                        1.0
+                    }
+                    else {
+                        -1.0
+                    }
+                })
                 .zip(self.current_volumes_in_0.iter())
                 .map(|(sample, volume)| sample * volume);
 
