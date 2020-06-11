@@ -32,10 +32,10 @@ impl IndependentUpdater {
         self.lfo.set_time_s(self.time_s);
     }
 
-    pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix, dglobal: &DGlobalRow) {
+    pub fn values_requested(&mut self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix, dglobal: &DGlobalRow) {
         iglobal[IGlobal::One] = 1.0;
 
-        self.envelope.values_requested(iglobal, ivoices, self.voices, dglobal);
+        self.envelope.values_requested(iglobal, ivoices, &mut self.voices, dglobal);
         self.pitch.values_requested(ivoices, self.voices);
         self.lfo.values_requested(iglobal);
     }
