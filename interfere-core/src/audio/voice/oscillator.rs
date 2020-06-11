@@ -18,11 +18,11 @@ impl Default for Oscillator {
 }
 
 impl Oscillator {
-    pub fn audio_requested(
+    pub fn voices_audio_requested(
         &mut self,
-        voices_dependents: &DVoicesMatrix,
         buffer: &mut [[f64; 16]],
         samplerate_in_hz: f64,
+        dvoices: &DVoicesMatrix,
     ) {
         use std::f64::consts::PI;
 
@@ -51,8 +51,8 @@ impl Oscillator {
 
             for idx in 0..16 {
                 if self.phases_in_rad[idx] >= (2.0 * PI) {
-                    self.current_pitches_in_tones[idx] = voices_dependents[DVoices(idx, DVoice::OscPitch)];
-                    self.current_volumes_in_0[idx] = voices_dependents[DVoices(idx, DVoice::OscVolume)];
+                    self.current_pitches_in_tones[idx] = dvoices[DVoices(idx, DVoice::OscPitch)];
+                    self.current_volumes_in_0[idx] = dvoices[DVoices(idx, DVoice::OscVolume)];
                     self.phases_in_rad[idx] %= 2.0 * PI;
                 }
             }

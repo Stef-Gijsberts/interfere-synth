@@ -12,16 +12,16 @@ pub struct Filter {
 
 
 impl Filter {
-     pub fn audio_requested(
+     pub fn voices_audio_requested(
         &mut self,
-        voices_dependents: &DVoicesMatrix,
         buffer: &mut [[f64; 16]],
         samplerate_in_hz: f64,
+        dvoices: &DVoicesMatrix,
     ) {
 
         use std::f64::consts::PI;
 
-        let cutoff_hz = voices_dependents[DVoices(0, DVoice::FilterFrequency)] * 10000.0;
+        let cutoff_hz = dvoices[DVoices(0, DVoice::FilterFrequency)] * 10000.0;
 
         let rc = 1.0 / (cutoff_hz*2.0*PI); 
         let dt = 1.0 / samplerate_in_hz; 

@@ -1,4 +1,4 @@
-use super::{IndependentUpdater, DependentDeriver, SoundGenerator};
+use super::{IndependentUpdater, DependentDeriver, AudioGenerator};
 
 use crate::Parameter;
 use crate::values::{IGlobalRow, IVoicesMatrix, DGlobalRow, DVoicesMatrix};
@@ -6,7 +6,7 @@ use crate::values::{IGlobalRow, IVoicesMatrix, DGlobalRow, DVoicesMatrix};
 pub struct Instance {
     independent_updater: IndependentUpdater,
     dependent_deriver: DependentDeriver,
-    sound_generator: SoundGenerator,
+    audio_generator: AudioGenerator,
     dglobal: DGlobalRow,
     dvoices: DVoicesMatrix,
     iglobal: IGlobalRow,
@@ -39,6 +39,6 @@ impl Instance {
         self.independent_updater.values_requested(&mut self.iglobal, &mut self.ivoices);
         self.dependent_deriver.values_requested(&mut self.dglobal, &mut self.dvoices, &self.iglobal, &self.ivoices);
 
-        self.sound_generator.audio_requested(buffer, samplerate_in_hz, &self.dglobal, &self.dvoices);
+        self.audio_generator.audio_requested(buffer, samplerate_in_hz, &self.dglobal, &self.dvoices);
     }
 }

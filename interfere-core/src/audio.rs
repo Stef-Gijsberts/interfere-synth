@@ -1,10 +1,6 @@
-mod filter;
-mod mixer;
-mod oscillator;
-mod sound_generator;
+mod global;
+mod voice;
 
-use filter::Filter;
-use mixer::Mixer;
-use oscillator::Oscillator;
+mod audio_generator;
 
-pub use sound_generator::SoundGenerator;
+pub use self::audio_generator::AudioGenerator;
