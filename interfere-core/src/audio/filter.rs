@@ -1,5 +1,4 @@
 use crate::values::{DVoicesMatrix, DVoice, DVoices};
-use crate::util::frequency_from_pitch;
 
 
 // Based on https://www.quora.com/Whats-the-C-coding-for-a-low-pass-filter and

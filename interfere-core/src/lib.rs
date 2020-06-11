@@ -1,10 +1,12 @@
+mod audio;
+mod independent;
+mod dependent;
+mod values;
 mod instance;
-mod oscillator;
-mod filter;
-mod util;
 
-pub mod values;
+use self::dependent::DependentDeriver;
+use self::independent::IndependentUpdater;
+use self::audio::SoundGenerator;
 
 pub use self::instance::Instance;
-pub use self::oscillator::Oscillator;
-pub use self::filter::Filter;
+pub use self::values::DVoice as Parameter;
