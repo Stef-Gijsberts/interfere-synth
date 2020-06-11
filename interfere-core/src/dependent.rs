@@ -1,4 +1,5 @@
 use crate::values::*;
+use crate::Parameter;
 
 pub struct DependentDeriver {
     w_global_global: WGlobalGlobalMatrix,
@@ -12,12 +13,6 @@ impl Default for DependentDeriver {
         let mut w_global_voice = WGlobalVoiceMatrix::zeros();
         let mut w_voice_voice = WVoiceVoiceMatrix::zeros();
 
-        w_global_voice[WGlobalVoice(IGlobal::LFO, DVoice::OscPitch)] = 0.5;
-
-        w_voice_voice[WVoiceVoice(IVoice::Pitch, DVoice::OscPitch)] = 1.0;
-        w_voice_voice[WVoiceVoice(IVoice::Envelope, DVoice::OscVolume)] = 1.0;
-        w_voice_voice[WVoiceVoice(IVoice::Envelope, DVoice::FilterFrequency)] = 1.0;
-
         DependentDeriver {
             w_global_global,
             w_global_voice,
@@ -30,8 +25,9 @@ impl DependentDeriver {
     pub fn update_parameters(&mut self, updates: impl Iterator<Item = (Parameter, f64)>) {
         for (param, new_value) in updates {
             match param {
-                Parameter::Global(idx) => self.w_global_global[WGlobalGlobal(IGlobal::One, idx)] = new_value,
-                Parameter::Voice(idx) => self.w_global_voice[WGlobalVoice(IGlobal::One, idx)] = new_value,
+                Parameter::GlobalGlobal(idx) => self.w_global_global[idx] = new_value,
+                Parameter::GlobalVoice(idx) => self.w_global_voice[idx] = new_value,
+                Parameter::VoiceVoice(idx) => self.w_voice_voice[idx] = new_value,
             }
         }
     }

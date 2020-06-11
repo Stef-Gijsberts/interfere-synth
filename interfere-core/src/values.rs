@@ -1,11 +1,8 @@
 use std::ops;
 
 use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
 
 use nalgebra as na;
-
-use na::Dim;
 
 
 pub type Value = f64;
@@ -18,14 +15,14 @@ pub type NumIVoice = na::U2;
 pub type NumDGlobal = na::U8;
 pub type NumDVoice = na::U3;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, FromPrimitive)]
 pub enum IGlobal {
     One = 0,
     PitchBend,
     LFO,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, FromPrimitive)]
 pub enum IVoice {
     Pitch,
     Envelope,
@@ -56,13 +53,13 @@ pub struct IVoices(pub usize, pub IVoice);
 #[derive(Clone, Copy)]
 pub struct DVoices(pub usize, pub DVoice);
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct WGlobalGlobal(pub IGlobal, pub DGlobal);
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct WGlobalVoice(pub IGlobal, pub DVoice);
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct WVoiceVoice(pub IVoice, pub DVoice);
 
 type Matrix<R, C> = na::MatrixMN<Value, R, C>;
@@ -77,36 +74,6 @@ pub type WVoiceVoiceMatrix = Matrix<NumIVoice, NumDVoice>;
 
 pub type DGlobalRow = Row<NumDGlobal>;
 pub type DVoicesMatrix = Matrix<NumVoices, NumDVoice>;
-
-#[derive(Clone, Copy, Debug)]
-pub enum Parameter {
-    Global(DGlobal),
-    Voice(DVoice),
-}
-
-impl Parameter {
-    pub fn from_i32(i: i32) -> Option<Parameter> {
-        assert!(i >= 0);
-
-        let num_dglobal = NumDGlobal::try_to_usize().unwrap() as i32;
-        let num_dvoice = NumDVoice::try_to_usize().unwrap() as i32;
-
-        let start_dglobal = 0;
-        let end_dglobal = start_dglobal + num_dglobal;
-        let start_dvoice = end_dglobal;
-        let end_dvoice = start_dvoice + num_dvoice;
-
-        if (start_dglobal..end_dglobal).contains(&i) {
-            Some(Parameter::Global(DGlobal::from_i32(i).unwrap()))
-        }
-        else if (start_dvoice..end_dvoice).contains(&i) {
-            Some(Parameter::Voice(DVoice::from_i32(i - start_dvoice).unwrap()))
-        }
-        else {
-            None
-        }
-    }
-}
 
 
 macro_rules! impl_row_index {
