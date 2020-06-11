@@ -19,8 +19,13 @@ impl Envelope {
         voices: [Option<Voice>; 16],
     ) {
         // TODO: remove all this and actually implement it
-        for mut row in ivoices.row_iter_mut() {
-            row[IVoice::Envelope1 as usize] = 1.0;
+        for (mut row, voice) in ivoices.row_iter_mut().zip(voices.iter()) {
+            if voice.is_some() {
+                row[IVoice::Envelope1 as usize] = 1.0;
+            }
+            else {
+                row[IVoice::Envelope1 as usize] = 0.0;
+            }
         }
     }
 }
