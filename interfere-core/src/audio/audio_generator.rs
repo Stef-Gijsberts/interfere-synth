@@ -6,7 +6,6 @@ pub struct AudioGenerator {
     oscillator: Oscillator,
     filter1: Filter,
     filter2: Filter,
-    filter3: Filter,
     voicebuffer: [[f64; 16]; 1000],
     idx_head_voicebuffer: usize,
 }
@@ -22,7 +21,6 @@ impl Default for AudioGenerator {
             oscillator: Default::default(),
             filter1: Default::default(),
             filter2: Default::default(),
-            filter3: Default::default(),
         }
     }
 }
@@ -56,12 +54,6 @@ impl AudioGenerator {
                     dvoices,
                 );
                 
-                self.filter3.voices_audio_requested(
-                    &mut self.voicebuffer,
-                    samplerate_in_hz,
-                    dvoices,
-                );
-
                 self.idx_head_voicebuffer = 0;
             }
 

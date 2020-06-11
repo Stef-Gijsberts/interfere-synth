@@ -50,11 +50,11 @@ impl Envelope {
 }
 
 fn adsr(attack_s: f64, decay_s: f64, sustain_0: f64, release_s: f64, t_s: f64, t_released_s: Option<f64>) -> Option<f64> {
-    if t_s <= attack_s {
+    if t_s < attack_s {
         return Some(t_s / attack_s);
     }
 
-    if t_s < attack_s + decay_s {
+    if t_s <= attack_s + decay_s {
         return Some(1.0 - (1.0 - sustain_0) * ((t_s - attack_s) / decay_s));
     }
 

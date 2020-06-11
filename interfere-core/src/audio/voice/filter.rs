@@ -17,14 +17,19 @@ impl Filter {
     ) {
         use std::f64::consts::PI;
 
-        let cutoff_hz = 30.0 + (dvoices[DVoices(0, DVoice::FilterFrequency)] * 12.0).exp() * 10.0;
+        let mut alphas: [f64; 16] = [0.0; 16];
 
-        let rc = 1.0 / (cutoff_hz * 2.0 * PI);
+        let cutoffs_hz = (0..16).map(|i| 30.0 + (dvoices[DVoices(i, DVoice::FilterFrequency)] * 12.0).exp() * 10.0);
+
+        let rcs = cutoffs_hz.map(|cutoff_hz| 1.0 / (cutoff_hz * 2.0 * PI));
         let dt = 1.0 / samplerate_in_hz;
-        let alpha = dt / (rc + dt);
+
+        for (alpha, rc) in alphas.iter_mut().zip(rcs) {
+            *alpha = dt / (rc + dt);
+        }
 
         for frame in buffer {
-            for (current, previous) in frame.iter_mut().zip(self.previous.iter_mut()) {
+            for ((current, previous), alpha) in frame.iter_mut().zip(self.previous.iter_mut()).zip(alphas.iter()) {
                 *current = *previous + (alpha * (*current - *previous));
                 *previous = *current;
             }
