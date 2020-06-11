@@ -14,7 +14,6 @@ use vst::util::ParameterTransfer;
 use vst::plugin_main;
 plugin_main!(InterfereVST);
 
-const NUM_PARAMETERS: i32 = 11; // TODO: not hardcode?
 
 struct InterfereVST {
     instance: Instance,
@@ -34,7 +33,7 @@ impl Default for InterfereVST {
 
         let instance: Instance = Instance::default();
         let parameters: Arc<VSTParameters> = Arc::new(VSTParameters(ParameterTransfer::new(
-            NUM_PARAMETERS as usize,
+            Parameter::num() as usize,
         )));
 
         // 1024 is a value that is sufficiently large for the processor to keep
@@ -61,7 +60,7 @@ impl Plugin for InterfereVST {
             category: Category::Synth,
             inputs: 0,
             outputs: 2,
-            parameters: NUM_PARAMETERS,
+            parameters: Parameter::num(),
             initial_delay: 0,
             ..Info::default()
         }
@@ -131,12 +130,12 @@ impl PluginParameters for VSTParameters {
 
     fn get_parameter_name(&self, index: i32) -> String {
         Parameter::from_i32(index)
-            .map(|x| format!("{:?}", x))
-            .unwrap_or("".to_owned())
+            .map(|x| format!("{}", x))
+            .unwrap_or(format!("ERR Parameter {}", index))
     }
 
     fn get_parameter(&self, index: i32) -> f32 {
-        let index_is_valid = (0..NUM_PARAMETERS).contains(&index);
+        let index_is_valid = (0..Parameter::num()).contains(&index);
 
         if !index_is_valid {
             return 0.0;
@@ -146,7 +145,7 @@ impl PluginParameters for VSTParameters {
     }
 
     fn set_parameter(&self, index: i32, value: f32) {
-        let index_is_valid = (0..NUM_PARAMETERS).contains(&index);
+        let index_is_valid = (0..Parameter::num()).contains(&index);
 
         if !index_is_valid {
             return;

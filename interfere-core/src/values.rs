@@ -24,13 +24,13 @@ pub enum IGlobal {
 
 #[derive(Clone, Copy, Debug, FromPrimitive)]
 pub enum IVoice {
-    Pitch,
+    Pitch = 0,
     Envelope,
 }
 
 #[derive(Clone, Copy, Debug, FromPrimitive)]
 pub enum DGlobal {
-    LFOFrequency,
+    LFOFrequency = 0,
     EnvAttack,
     EnvDecay,
     EnvSustain,
