@@ -24,10 +24,9 @@ impl MidiProcessor {
     fn note_on(&mut self, voices: &mut [Option<Voice>; 16], note: u8) {
         for maybe_voice in voices {
             if maybe_voice.is_none() {
-
                 *maybe_voice = Some(Voice {
                     time_started_s: self.time_s,
-                    note_pitch: note
+                    note_pitch: note,
                 });
 
                 return;

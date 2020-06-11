@@ -1,5 +1,4 @@
-use crate::values::{DVoicesMatrix, DVoice, DVoices};
-
+use crate::values::{DVoice, DVoices, DVoicesMatrix};
 
 #[derive(Default)]
 pub struct Oscillator {
@@ -27,11 +26,10 @@ impl Oscillator {
             self.phases_in_rad
                 .iter_mut()
                 .zip(frequencies_in_hz)
-                .for_each(|(p_in_rad, f_in_hz)| {
-                    *p_in_rad += 2.0 * PI * f_in_hz / samplerate_in_hz
-                });
+                .for_each(|(p_in_rad, f_in_hz)| *p_in_rad += 2.0 * PI * f_in_hz / samplerate_in_hz);
 
-            let values = self.phases_in_rad
+            let values = self
+                .phases_in_rad
                 .iter()
                 .copied()
                 .map(f64::sin)

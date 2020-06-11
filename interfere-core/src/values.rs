@@ -74,8 +74,6 @@ pub type WVoiceVoiceMatrix = Matrix<NumIVoice, NumDVoice>;
 pub type DGlobalRow = Row<NumDGlobal>;
 pub type DVoicesMatrix = Matrix<NumVoices, NumDVoice>;
 
-
-
 macro_rules! impl_row_index {
     ($row_type: ty, $index_type: ty, $num_columns: ty) => {
         impl ops::Index<$index_type> for $row_type {
@@ -92,7 +90,15 @@ macro_rules! impl_row_index {
             }
         }
 
-        impl<'a> na::indexing::MatrixIndex<'a, Value, na::U1, $num_columns, na::storage::Owned<Value, na::U1, $num_columns>> for $index_type {
+        impl<'a>
+            na::indexing::MatrixIndex<
+                'a,
+                Value,
+                na::U1,
+                $num_columns,
+                na::storage::Owned<Value, na::U1, $num_columns>,
+            > for $index_type
+        {
             type Output = Value;
 
             fn contained_by(&self, matrix: &$row_type) -> bool {
@@ -104,7 +110,15 @@ macro_rules! impl_row_index {
             }
         }
 
-        impl<'a> na::indexing::MatrixIndexMut<'a, Value, na::U1, $num_columns, na::storage::Owned<Value, na::U1, $num_columns>> for $index_type {
+        impl<'a>
+            na::indexing::MatrixIndexMut<
+                'a,
+                Value,
+                na::U1,
+                $num_columns,
+                na::storage::Owned<Value, na::U1, $num_columns>,
+            > for $index_type
+        {
             type OutputMut = &'a mut Self::Output;
 
             unsafe fn get_unchecked_mut(self, matrix: &'a mut $row_type) -> Self::OutputMut {
@@ -130,7 +144,15 @@ macro_rules! impl_matrix_index {
             }
         }
 
-        impl<'a> na::indexing::MatrixIndex<'a, Value, $num_rows, $num_columns, na::storage::Owned<Value, $num_rows, $num_columns>> for $index_type {
+        impl<'a>
+            na::indexing::MatrixIndex<
+                'a,
+                Value,
+                $num_rows,
+                $num_columns,
+                na::storage::Owned<Value, $num_rows, $num_columns>,
+            > for $index_type
+        {
             type Output = Value;
 
             fn contained_by(&self, matrix: &$matrix_type) -> bool {
@@ -142,7 +164,15 @@ macro_rules! impl_matrix_index {
             }
         }
 
-        impl<'a> na::indexing::MatrixIndexMut<'a, Value, $num_rows, $num_columns, na::storage::Owned<Value, $num_rows, $num_columns>> for $index_type {
+        impl<'a>
+            na::indexing::MatrixIndexMut<
+                'a,
+                Value,
+                $num_rows,
+                $num_columns,
+                na::storage::Owned<Value, $num_rows, $num_columns>,
+            > for $index_type
+        {
             type OutputMut = &'a mut Self::Output;
 
             unsafe fn get_unchecked_mut(self, matrix: &'a mut $matrix_type) -> Self::OutputMut {
@@ -151,7 +181,6 @@ macro_rules! impl_matrix_index {
         }
     };
 }
-
 
 impl_row_index!(IGlobalRow, IGlobal, NumIGlobal);
 impl_row_index!(DGlobalRow, DGlobal, NumDGlobal);

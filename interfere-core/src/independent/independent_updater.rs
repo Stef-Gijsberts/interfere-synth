@@ -1,7 +1,6 @@
-use super::{MidiProcessor, Envelope, LFO};
+use super::{Envelope, MidiProcessor, LFO};
 
-use crate::values::{IGlobalRow, IVoicesMatrix, IGlobal};
-
+use crate::values::{IGlobal, IGlobalRow, IVoicesMatrix};
 
 #[derive(Clone, Copy)]
 pub struct Voice {
@@ -34,7 +33,8 @@ impl IndependentUpdater {
     pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
         iglobal[IGlobal::One] = 1.0;
 
-        self.envelope.values_requested(iglobal, ivoices, self.voices);
+        self.envelope
+            .values_requested(iglobal, ivoices, self.voices);
         self.lfo.values_requested(iglobal);
     }
 }

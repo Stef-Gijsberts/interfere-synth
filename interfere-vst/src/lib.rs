@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use interfere_core::{Parameter, Instance};
+use interfere_core::{Instance, Parameter};
 
 use vst::api::{Events, Supported};
 use vst::buffer::AudioBuffer;

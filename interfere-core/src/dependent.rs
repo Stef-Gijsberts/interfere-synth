@@ -19,7 +19,7 @@ impl Default for DependentDeriver {
         DependentDeriver {
             w_global_global,
             w_global_voice,
-            w_voice_voice
+            w_voice_voice,
         }
     }
 }
@@ -31,7 +31,13 @@ impl DependentDeriver {
         }
     }
 
-    pub fn values_requested(&self, dglobal: &mut DGlobalRow, dvoices: &mut DVoicesMatrix, iglobal: &IGlobalRow, ivoices: &IVoicesMatrix) {
+    pub fn values_requested(
+        &self,
+        dglobal: &mut DGlobalRow,
+        dvoices: &mut DVoicesMatrix,
+        iglobal: &IGlobalRow,
+        ivoices: &IVoicesMatrix,
+    ) {
         *dglobal = iglobal * self.w_global_global;
 
         let voices_common_part = iglobal * self.w_global_voice;
@@ -40,6 +46,6 @@ impl DependentDeriver {
 
         dvoices
             .row_iter_mut()
-            .for_each(|mut row| row += voices_common_part);       
+            .for_each(|mut row| row += voices_common_part);
     }
 }
