@@ -1,7 +1,6 @@
 use super::{AudioGenerator, DependentDeriver, IndependentUpdater};
 
-use crate::values::{DGlobalRow, DVoicesMatrix, IGlobalRow, IVoicesMatrix};
-use crate::Parameter;
+use crate::values::{DGlobalRow, DVoicesMatrix, IGlobalRow, IVoicesMatrix, Parameter};
 
 pub struct Instance {
     independent_updater: IndependentUpdater,

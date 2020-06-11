@@ -25,7 +25,7 @@ impl Default for DependentDeriver {
 }
 
 impl DependentDeriver {
-    pub fn update_parameters(&mut self, updates: impl Iterator<Item = (DVoice, f64)>) {
+    pub fn update_parameters(&mut self, updates: impl Iterator<Item = (Parameter, f64)>) {
         for (idx, new_value) in updates {
             self.w_global_voice[WGlobalVoice(IGlobal::One, idx)] = new_value;
         }

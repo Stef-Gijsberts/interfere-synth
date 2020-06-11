@@ -6,6 +6,8 @@ use num_derive::FromPrimitive;
 
 pub type Value = f64;
 
+pub type Parameter = DVoice;
+
 pub type NumVoices = na::U16;
 
 pub type NumIGlobal = na::U5;

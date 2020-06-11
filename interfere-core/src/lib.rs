@@ -9,4 +9,4 @@ use self::dependent::DependentDeriver;
 use self::independent::IndependentUpdater;
 
 pub use self::instance::Instance;
-pub use self::values::DVoice as Parameter;
+pub use self::values::Parameter;
