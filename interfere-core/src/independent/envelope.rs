@@ -1,4 +1,6 @@
-use crate::values::{IGlobalRow, IVoicesMatrix};
+use crate::values::{IGlobalRow, IVoicesMatrix, IVoice};
+
+use super::Voice;
 
 
 #[derive(Default)]
@@ -8,11 +10,14 @@ pub struct Envelope {
 
 
 impl Envelope {
-    pub fn advance_time_s(&mut self, dt_s: f64) {
-        self.time_s += dt_s;
+    pub fn set_time_s(&mut self, time_s: f64) {
+        self.time_s = time_s;
     }
 
-    pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
-        // TODO
+    pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix, voices: [Option<Voice>; 16]) {
+        // TODO: remove all this and actually implement it
+        for mut row in ivoices.row_iter_mut() {
+            row[IVoice::Envelope1 as usize] = 1.0;
+        }
     }
 }

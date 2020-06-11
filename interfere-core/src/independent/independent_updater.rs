@@ -14,8 +14,8 @@ pub struct IndependentUpdater {
     midi_processor: MidiProcessor,
     envelope: Envelope,
     lfo: LFO,
-    time_s: f64,
     voices: [Option<Voice>; 16],
+    time_s: f64,
 }
 
 impl IndependentUpdater {
@@ -24,15 +24,17 @@ impl IndependentUpdater {
     }
 
     pub fn advance_time_s(&mut self, dt_s: f64) {
-        self.midi_processor.advance_time_s(dt_s);
-        self.envelope.advance_time_s(dt_s);
-        self.lfo.advance_time_s(dt_s);
+        self.time_s += dt_s;
+
+        self.midi_processor.set_time_s(self.time_s);
+        self.envelope.set_time_s(self.time_s);
+        self.lfo.set_time_s(self.time_s);
     }
 
     pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
         iglobal[IGlobal::One] = 1.0;
 
-        self.envelope.values_requested(iglobal, ivoices);
-        self.lfo.values_requested(iglobal, ivoices);
+        self.envelope.values_requested(iglobal, ivoices, self.voices);
+        self.lfo.values_requested(iglobal);
     }
 }

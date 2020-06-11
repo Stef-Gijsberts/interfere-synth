@@ -1,20 +1,11 @@
 use crate::values::{DVoicesMatrix, DVoice, DVoices};
 
 
+#[derive(Default)]
 pub struct Oscillator {
     phases_in_rad: [f64; 16],
     current_pitches_in_tones: [f64; 16],
     current_volumes_in_0: [f64; 16],
-}
-
-impl Default for Oscillator {
-    fn default() -> Oscillator {
-        Oscillator {
-            phases_in_rad: [0.0; 16],
-            current_pitches_in_tones: [0.0; 16],
-            current_volumes_in_0: [0.0; 16],
-        }
-    }
 }
 
 impl Oscillator {

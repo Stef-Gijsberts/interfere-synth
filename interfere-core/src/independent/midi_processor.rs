@@ -6,8 +6,8 @@ pub struct MidiProcessor {
 }
 
 impl MidiProcessor {
-    pub fn advance_time_s(&mut self, dt_s: f64) {
-        self.time_s += dt_s;
+    pub fn set_time_s(&mut self, time_s: f64) {
+        self.time_s = time_s;
     }
 
     pub fn process(&mut self, voices: &mut [Option<Voice>; 16], data: [u8; 3]) {
@@ -22,10 +22,10 @@ impl MidiProcessor {
     }
 
     fn note_on(&mut self, voices: &mut [Option<Voice>; 16], note: u8) {
-        for voice in voices {
-            if voice.is_none() {
+        for maybe_voice in voices {
+            if maybe_voice.is_none() {
 
-                *voice = Some(Voice {
+                *maybe_voice = Some(Voice {
                     time_started_s: self.time_s,
                     note_pitch: note
                 });
@@ -36,12 +36,11 @@ impl MidiProcessor {
     }
 
     fn note_off(&mut self, voices: &mut [Option<Voice>; 16], note: u8) {
-        for voice in voices {
-            match voice {
-                Some(Voice {note_pitch: note, time_started_s}) => {
-                    *voice = None;
-                },
-                _ => ()
+        for maybe_voice in voices {
+            if let Some(voice) = maybe_voice {
+                if voice.note_pitch == note {
+                    *maybe_voice = None;
+                }
             }
         }
     }

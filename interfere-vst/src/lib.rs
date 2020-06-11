@@ -8,7 +8,7 @@ use vst::event::Event;
 use vst::plugin::{CanDo, Category, Info, Plugin, PluginParameters};
 use vst::util::ParameterTransfer;
 
-use num_traits::{FromPrimitive, ToPrimitive};
+use num_traits::FromPrimitive;
 
 // A macro to generate the necessary exposed functions for the library to be recognized as a VST
 // plugin.
@@ -100,9 +100,9 @@ impl Plugin for InterfereVST {
         // Iterate over outputs as (&mut f32, &mut f32)
         // found at: https://github.com/RustAudio/vst-rs/blob/master/examples/dimension_expander.rs
         let (mut l, mut r) = outputs.split_at_mut(1);
-        let mut stereo_out = l[0].iter_mut().zip(r[0].iter_mut());
+        let stereo_out = l[0].iter_mut().zip(r[0].iter_mut());
 
-        stereo_out.for_each(|(l_out, r_out)| {
+        for (l, r) in stereo_out {
             let frames_available = self.buffer.len() > self.idx_buffer_head;
 
             if !frames_available {
@@ -117,10 +117,10 @@ impl Plugin for InterfereVST {
                 self.idx_buffer_head = 0;
             }
 
-            *l_out = self.buffer[self.idx_buffer_head].0 as f32;
-            *r_out = self.buffer[self.idx_buffer_head].1 as f32;
+            *l = self.buffer[self.idx_buffer_head].0 as f32;
+            *r = self.buffer[self.idx_buffer_head].1 as f32;
             self.idx_buffer_head += 1;
-        })
+        }
     }
 }
 

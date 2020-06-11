@@ -12,7 +12,12 @@ pub struct AudioGenerator {
 
 impl Default for AudioGenerator {
     fn default() -> AudioGenerator {
+        let voicebuffer = [[0.0; 16]; 1000];
+        let idx_head_voicebuffer = voicebuffer.len();
+
         AudioGenerator {
+            idx_head_voicebuffer,
+            voicebuffer,
             ..Default::default()
         }
     }
@@ -20,9 +25,6 @@ impl Default for AudioGenerator {
 
 impl AudioGenerator {
     pub fn audio_requested(&mut self, buffer: &mut [(f64, f64)], samplerate_in_hz: f64, dglobal: &DGlobalRow, dvoices: &DVoicesMatrix) {
-        let dest = &mut buffer[..];
-
-
         for (l, r) in buffer {
             let audio_available = self.voicebuffer.len() > self.idx_head_voicebuffer;
 

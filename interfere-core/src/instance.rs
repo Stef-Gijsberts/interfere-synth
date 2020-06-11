@@ -11,12 +11,15 @@ pub struct Instance {
     dvoices: DVoicesMatrix,
     iglobal: IGlobalRow,
     ivoices: IVoicesMatrix,
-    time_s: f64,
 }
 
 impl Default for Instance {
     fn default() -> Instance {
         Instance {
+            dglobal: DGlobalRow::zeros(),
+            dvoices: DVoicesMatrix::zeros(),
+            iglobal: IGlobalRow::zeros(),
+            ivoices: IVoicesMatrix::zeros(),
             ..Default::default()
         }
     }

@@ -1,4 +1,4 @@
-use crate::values::{IGlobalRow, IVoicesMatrix};
+use crate::values::IGlobalRow;
 
 
 #[derive(Default)]
@@ -8,11 +8,11 @@ pub struct LFO {
 
 
 impl LFO {
-    pub fn advance_time_s(&mut self, dt_s: f64) {
-        self.time_s += dt_s;
+    pub fn set_time_s(&mut self, time_s: f64) {
+        self.time_s = time_s;
     }
 
-    pub fn values_requested(&self, iglobal: &mut IGlobalRow, ivoices: &mut IVoicesMatrix) {
+    pub fn values_requested(&self, iglobal: &mut IGlobalRow) {
         // TODO
     }
 }
