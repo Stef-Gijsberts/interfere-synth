@@ -20,10 +20,10 @@ impl Envelope {
         dglobal: &DGlobalRow,
     ) {
         
-        let attack_s = dglobal[DGlobal::Env1Attack];
-        let decay_s = dglobal[DGlobal::Env1Decay];
-        let sustain_0 = dglobal[DGlobal::Env1Sustain];
-        let release_s = dglobal[DGlobal::Env1Release];
+        let attack_s = dglobal[DGlobal::EnvAttack];
+        let decay_s = dglobal[DGlobal::EnvDecay];
+        let sustain_0 = dglobal[DGlobal::EnvSustain];
+        let release_s = dglobal[DGlobal::EnvRelease];
 
         for (idx, maybe_voice) in (0..).zip(voices.iter_mut()) {
 
@@ -44,7 +44,7 @@ impl Envelope {
                 None => 0.0
             };
 
-            ivoices[IVoices(idx, IVoice::Envelope1)] = val;
+            ivoices[IVoices(idx, IVoice::Envelope)] = val;
         }
     }
 }
@@ -63,11 +63,11 @@ fn adsr(attack_s: f64, decay_s: f64, sustain_0: f64, release_s: f64, t_s: f64, t
         Some(tr_s) => {
             let released_for_s = t_s - tr_s;
 
-            if released_for_s < release_s {
+            if released_for_s > release_s {
                 return None;
             }
 
-            return Some(sustain_0 * (1.0 - released_for_s / release_s));
+            return Some(f64::max(0.0, sustain_0 * (1.0 - (released_for_s / release_s))));
         },
     }
 }

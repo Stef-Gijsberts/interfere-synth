@@ -13,8 +13,8 @@ impl Default for DependentDeriver {
         let mut w_voice_voice = WVoiceVoiceMatrix::zeros();
 
         w_voice_voice[WVoiceVoice(IVoice::Pitch, DVoice::OscPitch)] = 1.0;
-        w_voice_voice[WVoiceVoice(IVoice::Envelope1, DVoice::OscVolume)] = 1.0;
-        w_voice_voice[WVoiceVoice(IVoice::Envelope1, DVoice::FilterFrequency)] = 1.0;
+        w_voice_voice[WVoiceVoice(IVoice::Envelope, DVoice::OscVolume)] = 1.0;
+        w_voice_voice[WVoiceVoice(IVoice::Envelope, DVoice::FilterFrequency)] = 1.0;
 
         DependentDeriver {
             w_global_global,

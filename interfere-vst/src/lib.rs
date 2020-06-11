@@ -14,7 +14,7 @@ use vst::util::ParameterTransfer;
 use vst::plugin_main;
 plugin_main!(InterfereVST);
 
-const NUM_PARAMETERS: i32 = 12; // TODO: not hardcode?
+const NUM_PARAMETERS: i32 = 11; // TODO: not hardcode?
 
 struct InterfereVST {
     instance: Instance,
