@@ -32,15 +32,23 @@ impl Oscillator {
                 .phases_in_rad
                 .iter()
                 .copied()
+                // .map(|phase| {
+                //     if phase % 2.0 * PI > PI {
+                //         phase - 2.0 * PI
+                //     }
+                //     else {
+                //         phase
+                //     }
+                // })
                 .map(f64::sin)
-                .map(|x| {
-                    if x > 0.0 {
-                        1.0
-                    }
-                    else {
-                        -1.0
-                    }
-                })
+                // .map(|x| {
+                //     if x > 0.0 {
+                //         1.0
+                //     }
+                //     else {
+                //         -1.0
+                //     }
+                // })
                 .zip(self.current_volumes_in_0.iter())
                 .map(|(sample, volume)| sample * volume);
 

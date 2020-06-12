@@ -6,13 +6,13 @@ pub struct AudioGenerator {
     oscillator: Oscillator,
     filter1: Filter,
     filter2: Filter,
-    voicebuffer: [[f64; 16]; 1000],
+    voicebuffer: [[f64; 16]; 128],
     idx_head_voicebuffer: usize,
 }
 
 impl Default for AudioGenerator {
     fn default() -> AudioGenerator {
-        let voicebuffer = [[0.0; 16]; 1000];
+        let voicebuffer = [[0.0; 16]; 128];
         let idx_head_voicebuffer = voicebuffer.len();
 
         AudioGenerator {
