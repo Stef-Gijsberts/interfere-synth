@@ -1,4 +1,0 @@
-[x] figure out why the frequency of the oscillator is not affected by the midi notes played
-[x] figure out why nothing works anymore :)
-[x] use shorter names
-[x] implement nalgebra's index trait instead of the default one
